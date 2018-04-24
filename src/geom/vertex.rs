@@ -1,9 +1,9 @@
 use geom::{Unit, Vector};
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Vertex {
-    position: Vector,
-    normal: Vector,
+    pub position: Vector,
+    pub normal: Vector,
 }
 
 impl Vertex {
@@ -11,8 +11,10 @@ impl Vertex {
         Vertex { position, normal }
     }
 
-    pub fn flip(&mut self) {
-        self.normal = self.normal.negate();
+    pub fn flip(&mut self) -> Vertex {
+        Vertex::new(
+            self.position,
+            self.normal.negate())
     }
 
     pub fn interpolate(&self, other: Vertex, t: Unit) -> Vertex {

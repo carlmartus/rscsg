@@ -1,0 +1,5 @@
+struct BspNode {
+}
+
+impl BspNode {
+}
