@@ -1,6 +1,5 @@
+use geom::Unit;
 use std::ops::{Add, Div, Mul, Neg, Sub};
-
-type Unit = f32;
 
 #[derive(Clone, Copy)]
 pub struct Vector(pub Unit, pub Unit, pub Unit);

@@ -1,4 +1,4 @@
-mod geom;
+pub mod geom;
 
 #[cfg(test)]
 mod tests {
