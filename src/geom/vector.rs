@@ -1,6 +1,15 @@
 use geom::Unit;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
+/// Represents a 3D vector.
+///
+/// Example usage:
+///
+/// ```
+/// use rscsg::geom::Vector;
+/// Vector(1f32, 2f32, 3f32);
+/// ```
+
 #[derive(Clone, Copy)]
 pub struct Vector(pub Unit, pub Unit, pub Unit);
 
@@ -13,6 +22,7 @@ impl Vector {
         self.0*other.0 + self.1*other.1 + self.2*other.2
     }
 
+    /// Lerp. Linear interpolation from `self` to `other`
     pub fn lerp(&self, other: Vector, t: Unit) -> Vector {
         let me = self.clone();
         me + (other - me) * t
@@ -22,10 +32,12 @@ impl Vector {
         self.dot(*self).sqrt()
     }
 
+    /// Normalize length of vector to 1.
     pub fn normalize(&self) -> Vector {
         *self / self.length()
     }
 
+    /// Cross product with another vector.
     pub fn cross(&self, other: Vector) -> Vector {
         Vector(
             self.1*other.2 - self.2*other.1,

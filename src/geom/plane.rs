@@ -12,10 +12,13 @@ bitflags! {
 
 type Collector = Vec<Polygon>;
 
+/// Represents a plane in 3D space.
 #[derive(Clone)]
 pub struct Plane(Vector, Unit);
 
 impl Plane {
+    /// `Plane.EPSILON` is the tolerance used by `splitPolygon()` to decide if a point is on the
+    /// plane.
     pub const EPSILON: Unit = 0.00001;
 
     pub fn from_points(v0: Vector, v1: Vector, v2: Vector) -> Plane {
@@ -29,6 +32,11 @@ impl Plane {
             -self.1)
     }
 
+
+    /// Split `polygon` by this plane if needed, then put the polygon or polygon fragments in the
+    /// appropriate lists. Coplanar polygons go into either `coplanarFront` or `coplanarBack`
+    /// depending on their orientation with respect to this plane. Polygons in front or in back of
+    /// this plane go into either `front` or `back`
     pub fn split_polygon(&self,
                          poly: &Polygon,
                          coplane_front: &mut Collector,
