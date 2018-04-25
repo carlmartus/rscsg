@@ -21,9 +21,7 @@ impl Vertex {
     /// Invert all orientation-specific data (e.g. vertex normal). Called when the orientation of a
     /// polygon is flipped.
     pub fn flip(&mut self) -> Vertex {
-        Vertex::new(
-            self.position,
-            self.normal.negate())
+        Vertex::new(self.position, self.normal.negate())
     }
 
     /// Create a new vertex between this vertex and `other` by linearly interpolating all
@@ -32,6 +30,7 @@ impl Vertex {
     pub fn interpolate(&self, other: Vertex, t: Unit) -> Vertex {
         Vertex::new(
             self.position.lerp(other.position, t),
-            self.normal.lerp(other.normal, t))
+            self.normal.lerp(other.normal, t),
+        )
     }
 }

@@ -1,13 +1,13 @@
 pub type Unit = f32;
 
-mod vector;
-mod vertex;
+mod bsp_node;
 mod plane;
 mod polygon;
-mod bsp_node;
+mod vector;
+mod vertex;
 
-pub use self::vector::Vector;
-pub use self::vertex::Vertex;
+pub use self::bsp_node::BspNode;
 pub use self::plane::Plane;
 pub use self::polygon::Polygon;
-pub use self::bsp_node::BspNode;
+pub use self::vector::Vector;
+pub use self::vertex::Vertex;

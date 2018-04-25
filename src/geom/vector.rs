@@ -19,7 +19,7 @@ impl Vector {
     }
 
     pub fn dot(&self, other: Vector) -> Unit {
-        self.0*other.0 + self.1*other.1 + self.2*other.2
+        self.0 * other.0 + self.1 * other.1 + self.2 * other.2
     }
 
     /// Lerp. Linear interpolation from `self` to `other`
@@ -40,9 +40,10 @@ impl Vector {
     /// Cross product with another vector.
     pub fn cross(&self, other: Vector) -> Vector {
         Vector(
-            self.1*other.2 - self.2*other.1,
-            self.2*other.0 - self.0*other.2,
-            self.0*other.1 - self.1*other.0)
+            self.1 * other.2 - self.2 * other.1,
+            self.2 * other.0 - self.0 * other.2,
+            self.0 * other.1 - self.1 * other.0,
+        )
     }
 }
 
@@ -50,10 +51,7 @@ impl Add for Vector {
     type Output = Vector;
 
     fn add(self, other: Vector) -> Vector {
-        Vector(
-            self.0 + other.0,
-            self.1 + other.1,
-            self.2 + other.2)
+        Vector(self.0 + other.0, self.1 + other.1, self.2 + other.2)
     }
 }
 
@@ -61,10 +59,7 @@ impl Sub for Vector {
     type Output = Vector;
 
     fn sub(self, other: Vector) -> Vector {
-        Vector(
-            self.0 - other.0,
-            self.1 - other.1,
-            self.2 - other.2)
+        Vector(self.0 - other.0, self.1 - other.1, self.2 - other.2)
     }
 }
 
@@ -80,10 +75,7 @@ impl Mul<Unit> for Vector {
     type Output = Vector;
 
     fn mul(self, rhs: Unit) -> Vector {
-        Vector(
-            self.0 * rhs,
-            self.1 * rhs,
-            self.2 * rhs)
+        Vector(self.0 * rhs, self.1 * rhs, self.2 * rhs)
     }
 }
 
@@ -92,9 +84,6 @@ impl Div<Unit> for Vector {
 
     fn div(self, rhs: Unit) -> Vector {
         let inv = (1 as Unit) / rhs;
-        Vector(
-            self.0 * inv,
-            self.1 * inv,
-            self.2 * inv)
+        Vector(self.0 * inv, self.1 * inv, self.2 * inv)
     }
 }

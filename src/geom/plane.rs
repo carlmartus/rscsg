@@ -1,4 +1,4 @@
-use geom::{Unit, Vector, Polygon, Vertex};
+use geom::{Polygon, Unit, Vector, Vertex};
 
 bitflags! {
     struct Location: u32 {
@@ -27,23 +27,21 @@ impl Plane {
     }
 
     pub fn flip(&self) -> Plane {
-        Plane(
-            self.0.negate(),
-            -self.1)
+        Plane(self.0.negate(), -self.1)
     }
-
 
     /// Split `polygon` by this plane if needed, then put the polygon or polygon fragments in the
     /// appropriate lists. Coplanar polygons go into either `coplanarFront` or `coplanarBack`
     /// depending on their orientation with respect to this plane. Polygons in front or in back of
     /// this plane go into either `front` or `back`
-    pub fn split_polygon(&self,
-                         poly: &Polygon,
-                         coplane_front: &mut Collector,
-                         coplane_back: &mut Collector,
-                         front: &mut Collector,
-                         back: &mut Collector) {
-
+    pub fn split_polygon(
+        &self,
+        poly: &Polygon,
+        coplane_front: &mut Collector,
+        coplane_back: &mut Collector,
+        front: &mut Collector,
+        back: &mut Collector,
+    ) {
         let mut polygon_type = Location::NONE;
         let mut vertex_locs: Vec<Location> = Vec::with_capacity(poly.vertices.len());
         let vertices_num = poly.vertices.len();
@@ -72,19 +70,19 @@ impl Plane {
                 } else {
                     coplane_back.push(poly.clone());
                 }
-            },
+            }
             Location::FRONT => {
                 front.push(poly.clone());
-            },
+            }
             Location::BACK => {
                 back.push(poly.clone());
-            },
+            }
             Location::SPANNING => {
                 let mut f: Vec<Vertex> = Vec::new();
                 let mut b: Vec<Vertex> = Vec::new();
 
                 for (i, v) in poly.vertices.iter().enumerate() {
-                    let j = (i+1) % vertices_num;
+                    let j = (i + 1) % vertices_num;
                     let ti = vertex_locs[i];
                     let tj = vertex_locs[i];
                     let vi = v.clone();
@@ -103,9 +101,8 @@ impl Plane {
                     }
 
                     if (ti | tj) == Location::SPANNING {
-                        let t =
-                            (self.1 - self.0.dot(vi.position)) /
-                            self.0.dot(vj.position - vi.position);
+                        let t = (self.1 - self.0.dot(vi.position))
+                            / self.0.dot(vj.position - vi.position);
 
                         let v = vi.interpolate(vj, t);
                         f.push(v);
@@ -120,8 +117,8 @@ impl Plane {
                 if b.len() >= 3 {
                     front.push(Polygon::new(b));
                 }
-            },
-            _ => ()
+            }
+            _ => (),
         }
     }
 }

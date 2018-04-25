@@ -1,5 +1,4 @@
-use geom::{Vertex, Plane};
-
+use geom::{Plane, Vertex};
 
 /// Represents a convex polygon. The vertices used to initialize a polygon must be coplanar and
 /// form a convex loop. They do not have to be `Vertex` instances but they must behave similarly
@@ -21,11 +20,10 @@ impl Polygon {
         let plane = Plane::from_points(
             vertices[0].position,
             vertices[1].position,
-            vertices[2].position);
+            vertices[2].position,
+        );
 
-        Polygon {
-            vertices, plane,
-        }
+        Polygon { vertices, plane }
     }
 
     pub fn flip(&mut self) {
