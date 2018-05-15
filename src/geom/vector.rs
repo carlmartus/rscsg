@@ -1,4 +1,4 @@
-use geom::Unit;
+use geom::{Unit, UNIT_PI};
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 /// Represents a 3D vector.
@@ -44,6 +44,26 @@ impl Vector {
             self.2 * other.0 - self.0 * other.2,
             self.0 * other.1 - self.1 * other.0,
         )
+    }
+
+    pub fn rotate(&self, axis: Vector, angle_deg: Unit) -> Vector {
+        let va: Unit = self.dot(axis);
+        let vprep = *self - axis*va;
+        let vprep_len = vprep.length();
+
+        if vprep_len == 0. {
+            *self
+        } else {
+
+            let cos_angle = (UNIT_PI * angle_deg / 180.).cos();
+            let sin_angle = (UNIT_PI * angle_deg / 180.).sin();
+
+            let u0 = vprep.normalize();
+            let u1 = u0.cross(axis);
+            let vcos = vprep_len * cos_angle;
+            let vsin = vprep_len * sin_angle;
+            axis*va + u0*vcos + u1*vsin
+        }
     }
 }
 
