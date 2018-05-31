@@ -1,4 +1,5 @@
 use geom::{Polygon, Vector, Vertex, Unit};
+use std::collections::HashMap;
 
 #[derive(Clone)]
 pub struct Csg {
@@ -82,12 +83,19 @@ impl Csg {
         }
     }
 
-    pub fn to_vertices_and_polygons(&self) -> (Vec<Vertex>, Vec<Polygon>) {
+    pub fn to_vertices_and_polygons(&self) -> (Vec<Vertex>, Vec<Polygon>, usize) {
         let mut verts: Vec<Vertex> = Vec::new();
         let mut polys: Vec<Polygon> = Vec::new();
 
+        let mut vert_index: HashMap<Vector, usize> = HashMap::new();
+
+        for poly in &self.polygons {
+            for vert in &poly.vertices {
+            }
+        }
+
         // TODO
 
-        (verts, polys)
+        (verts, polys, 0)
     }
 }

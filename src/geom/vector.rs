@@ -1,5 +1,6 @@
 use geom::{Unit, UNIT_PI};
 use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::hash::{Hash, Hasher};
 
 /// Represents a 3D vector.
 ///
@@ -105,5 +106,20 @@ impl Div<Unit> for Vector {
     fn div(self, rhs: Unit) -> Vector {
         let inv = (1 as Unit) / rhs;
         Vector(self.0 * inv, self.1 * inv, self.2 * inv)
+    }
+}
+
+impl Hash for Vector {
+    fn hash<H: Hasher>(&self, hashsum: &mut H) {
+        [self.0, self.1, self.2].iter().for_each(|coord| {
+            let simplified = (coord * 100000.).round() as i32;
+            simplified.hash(hashsum);
+        });
+    }
+}
+
+impl PartialEq for Vector {
+    fn eq(&self, rhs: &Vector) -> bool {
+        false
     }
 }
