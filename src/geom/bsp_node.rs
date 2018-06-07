@@ -105,6 +105,24 @@ impl BspNode {
         }
     }
 
+    pub fn all_polygons(&self) -> Vec<Polygon> {
+        let mut polys: Vec<Polygon> = self.polygons.clone();
+        self.fill_polygons(&mut polys);
+        polys
+    }
+
+    fn fill_polygons(&self, polys: &mut Vec<Polygon>) {
+        polys.append(&mut self.polygons.clone());
+
+        if self.front.is_some() {
+            self.front.as_ref().unwrap().fill_polygons(polys);
+        }
+
+        if self.back.is_some() {
+            self.back.as_ref().unwrap().fill_polygons(polys);
+        }
+    }
+
     /// Build a BSP tree out of `Vec<Polygon>`. When called on an existing tree, the new polygons
     /// are filtered down to the bottom of the tree and become new nodes there. Each set of
     /// polygons is partitioned using the first polygon (no heuristic is used to pick a good

@@ -1,5 +1,5 @@
-use geom::{Polygon, Vector, Vertex, Unit};
-use std::collections::HashMap;
+use geom::{BspNode, Polygon, Unit, Vector, Vertex};
+//use std::collections::HashMap;
 
 #[derive(Clone)]
 pub struct Csg {
@@ -13,7 +13,7 @@ impl Csg {
         }
     }
 
-    pub fn from_polygons(&mut self, polygons: Vec<Polygon>) -> Csg {
+    pub fn from_polygons(polygons: Vec<Polygon>) -> Csg {
         Csg { polygons }
     }
 
@@ -51,12 +51,13 @@ impl Csg {
             for i in 0..len_verts {
                 let vs = vec![
                     new_verts[i],
-                    new_verts[i+len_verts],
-                    new_verts[2*len_verts],
-                    new_verts[len_verts+i-1]];
+                    new_verts[i + len_verts],
+                    new_verts[2 * len_verts],
+                    new_verts[len_verts + i - 1],
+                ];
 
-                    let new_poly = Polygon::new(vs);
-                    new_csg.polygons.push(new_poly);
+                let new_poly = Polygon::new(vs);
+                new_csg.polygons.push(new_poly);
             }
         }
 
@@ -72,7 +73,7 @@ impl Csg {
         }
     }
 
-    pub fn rotate (&mut self, axis: Vector, angle_deg: Unit) {
+    pub fn rotate(&mut self, axis: Vector, angle_deg: Unit) {
         for poly in &mut self.polygons {
             for vert in &mut poly.vertices {
                 vert.position = vert.position.rotate(axis, angle_deg);
@@ -83,19 +84,83 @@ impl Csg {
         }
     }
 
+    // TODO: Needed for VTK
+    /*
     pub fn to_vertices_and_polygons(&self) -> (Vec<Vertex>, Vec<Polygon>, usize) {
         let mut verts: Vec<Vertex> = Vec::new();
         let mut polys: Vec<Polygon> = Vec::new();
 
-        let mut vert_index: HashMap<Vector, usize> = HashMap::new();
+        let mut vert_index: HashMap<IVector, usize> = HashMap::new();
 
         for poly in &self.polygons {
+
+            let cell:Vec<Vertex> = Vec::new();
             for vert in &poly.vertices {
+                cell.push(
             }
+
+            polys.push(Polygon::new(cell);
         }
 
         // TODO
 
         (verts, polys, 0)
+    }
+        */
+
+    pub fn union(&self, other: &Csg) -> Csg {
+        let mut a = BspNode::new(Some(self.polygons.clone()));
+        let mut b = BspNode::new(Some(other.polygons.clone()));
+
+        a.clip_to(&mut b);
+        b.clip_to(&mut a);
+        b.invert();
+        b.clip_to(&mut a);
+        b.invert();
+        a.build(b.all_polygons());
+
+        Csg::from_polygons(a.all_polygons())
+    }
+
+    pub fn subtract(&self, other: &Csg) -> Csg {
+        let mut a = BspNode::new(Some(self.polygons.clone()));
+        let mut b = BspNode::new(Some(other.polygons.clone()));
+
+        a.invert();
+        a.clip_to(&mut b);
+        b.clip_to(&mut a);
+        b.invert();
+        b.clip_to(&mut a);
+        b.invert();
+        a.build(b.all_polygons());
+        a.invert();
+
+        Csg::from_polygons(a.all_polygons())
+    }
+
+    pub fn intersect(&self, other: &Csg) -> Csg {
+        let mut a = BspNode::new(Some(self.polygons.clone()));
+        let mut b = BspNode::new(Some(other.polygons.clone()));
+
+        a.invert();
+        b.clip_to(&mut a);
+        b.invert();
+        a.clip_to(&mut b);
+        b.clip_to(&mut a);
+        a.build(b.all_polygons());
+        a.invert();
+        Csg::from_polygons(a.all_polygons())
+    }
+
+    pub fn inverse(&self) -> Csg {
+        let mut csg = self.clone();
+        for poly in csg.polygons.iter_mut() {
+            poly.flip();
+        }
+        csg
+    }
+
+    pub fn cube(center: Vector, radius: Unit) -> Csg {
+        // TODO continue
     }
 }

@@ -1,6 +1,6 @@
-use geom::{Unit, UNIT_PI};
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use geom::{IUnit, Unit, UNIT_PI};
 use std::hash::{Hash, Hasher};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 /// Represents a 3D vector.
 ///
@@ -13,6 +13,9 @@ use std::hash::{Hash, Hasher};
 
 #[derive(Clone, Copy)]
 pub struct Vector(pub Unit, pub Unit, pub Unit);
+
+#[derive(Clone, Copy, Eq)]
+pub struct IVector(pub i32, pub i32, pub i32);
 
 impl Vector {
     pub fn negate(&self) -> Vector {
@@ -49,13 +52,12 @@ impl Vector {
 
     pub fn rotate(&self, axis: Vector, angle_deg: Unit) -> Vector {
         let va: Unit = self.dot(axis);
-        let vprep = *self - axis*va;
+        let vprep = *self - axis * va;
         let vprep_len = vprep.length();
 
         if vprep_len == 0. {
             *self
         } else {
-
             let cos_angle = (UNIT_PI * angle_deg / 180.).cos();
             let sin_angle = (UNIT_PI * angle_deg / 180.).sin();
 
@@ -63,8 +65,16 @@ impl Vector {
             let u1 = u0.cross(axis);
             let vcos = vprep_len * cos_angle;
             let vsin = vprep_len * sin_angle;
-            axis*va + u0*vcos + u1*vsin
+            axis * va + u0 * vcos + u1 * vsin
         }
+    }
+
+    pub fn discreet(&self, div: Unit) -> IVector {
+        fn conv(x: Unit, d: Unit) -> IUnit {
+            (x / d).round() as i32
+        }
+
+        IVector(conv(self.0, div), conv(self.1, div), conv(self.2, div))
     }
 }
 
@@ -109,17 +119,16 @@ impl Div<Unit> for Vector {
     }
 }
 
-impl Hash for Vector {
+impl Hash for IVector {
     fn hash<H: Hasher>(&self, hashsum: &mut H) {
-        [self.0, self.1, self.2].iter().for_each(|coord| {
-            let simplified = (coord * 100000.).round() as i32;
-            simplified.hash(hashsum);
-        });
+        self.0.hash(hashsum);
+        self.1.hash(hashsum);
+        self.2.hash(hashsum);
     }
 }
 
-impl PartialEq for Vector {
-    fn eq(&self, rhs: &Vector) -> bool {
-        false
+impl PartialEq for IVector {
+    fn eq(&self, rhs: &IVector) -> bool {
+        self.0 == rhs.0 && self.1 == rhs.1 && self.2 == rhs.2
     }
 }
