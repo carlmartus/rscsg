@@ -164,14 +164,14 @@ impl Csg {
     /// * `dim` - Dimensions of cube
     pub fn cube(cen: Vector, dim: Vector) -> Csg {
         fn dim_coord(cen: Unit, dim: Unit, test: i32) -> Unit {
-            cen + if test > 0 { dim * 2. } else { -dim }
+            cen + if test > 0 { dim } else { -dim }
         }
 
         Csg::from_polygons(
             [
-                ([0b000, 0b100, 0b011, 0b010], Vector(-1., 0., 0.)),
+                ([0b000, 0b100, 0b110, 0b010], Vector(-1., 0., 0.)),
                 ([0b001, 0b011, 0b111, 0b101], Vector(1., 0., 0.)),
-                ([0b000, 0b001, 0b011, 0b100], Vector(0., -1., 0.)),
+                ([0b000, 0b001, 0b101, 0b100], Vector(0., -1., 0.)),
                 ([0b010, 0b110, 0b111, 0b011], Vector(0., 1., 0.)),
                 ([0b000, 0b010, 0b011, 0b001], Vector(0., 0., -1.)),
                 ([0b100, 0b101, 0b111, 0b110], Vector(0., 0., 1.)),

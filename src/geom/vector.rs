@@ -69,12 +69,12 @@ impl Vector {
         }
     }
 
-    pub fn discreet(&self, div: Unit) -> IVector {
+    pub fn discreet(&self, step: Unit) -> IVector {
         fn conv(x: Unit, d: Unit) -> IUnit {
-            (x / d).round() as i32
+            (x * d).round() as i32
         }
 
-        IVector(conv(self.0, div), conv(self.1, div), conv(self.2, div))
+        IVector(conv(self.0, step), conv(self.1, step), conv(self.2, step))
     }
 }
 
