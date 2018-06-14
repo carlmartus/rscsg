@@ -1,10 +1,8 @@
-use core::Csg;
-use geom::{IVector, Unit, Vector};
+mod bounding_box;
 
-struct BoundBox {
-    min: Vector,
-    max: Vector,
-}
+use self::bounding_box::BoundBox;
+use core::Csg;
+use geom::Vector;
 
 #[test]
 fn types() {
@@ -34,47 +32,7 @@ fn csg_cube() {
     assert_eq!(-10, d_min.0);
     assert_eq!(-10, d_min.1);
     assert_eq!(-10, d_min.2);
-    assert_eq!( 10, d_max.0);
-    assert_eq!( 10, d_max.1);
-    assert_eq!( 10, d_max.2);
-}
-
-impl BoundBox {
-    /// Create bounding box with origo `(0, 0, 0)` as starting point for maximum and minimum
-    /// borders.
-    pub fn origo() -> BoundBox {
-        BoundBox {
-            min: Vector(0., 0., 0.),
-            max: Vector(0., 0., 0.),
-        }
-    }
-
-    pub fn stretch(&mut self, v: Vector) {
-
-        // Min
-        if v.0 < self.min.0 {
-            self.min.0 = v.0
-        }
-        if v.1 < self.min.1 {
-            self.min.1 = v.1
-        }
-        if v.2 < self.min.2 {
-            self.min.2 = v.2
-        }
-
-        // Max
-        if v.0 > self.min.0 {
-            self.max.0 = v.0
-        }
-        if v.1 > self.min.1 {
-            self.max.1 = v.1
-        }
-        if v.2 > self.min.2 {
-            self.max.2 = v.2
-        }
-    }
-
-    pub fn get_min_max_discreet(&self, div: Unit) -> (IVector, IVector) {
-        (self.min.discreet(div), self.max.discreet(div))
-    }
+    assert_eq!(10, d_max.0);
+    assert_eq!(10, d_max.1);
+    assert_eq!(10, d_max.2);
 }
