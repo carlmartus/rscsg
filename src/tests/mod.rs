@@ -9,6 +9,7 @@ fn types() {
     Vector(0., 0., 0.);
 }
 
+/// Create a cube, make sure it's inside a bounding box.
 #[test]
 fn csg_cube() {
     let cube = Csg::cube(Vector(0., 0., 0.), Vector(1.0, 1.0, 1.0));
@@ -35,4 +36,15 @@ fn csg_cube() {
     assert_eq!(10, d_max.0);
     assert_eq!(10, d_max.1);
     assert_eq!(10, d_max.2);
+}
+
+/// Big cube will subtract itself onto a smaller cube, removing everything.
+#[test]
+fn csg_total_subtraction() {
+    let polys = Csg::subtract(
+        &Csg::cube(Vector(0., 0., 0.), Vector(1., 1., 1.)), // Small cube
+        &Csg::cube(Vector(0., 0., 0.), Vector(2., 2., 2.)), // Big cube
+    ).to_polygons();
+
+    assert_eq!(0, polys.len());
 }
