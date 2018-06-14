@@ -2,11 +2,20 @@ mod bounding_box;
 
 use self::bounding_box::BoundBox;
 use core::Csg;
-use geom::Vector;
+use geom::{BspNode, Plane, Polygon, Vector, Vertex};
 
 #[test]
 fn types() {
+    Csg::new();
+    BspNode::new(Some(vec![]));
+    Plane::from_points(Vector(0., 0., 0.), Vector(1., 0., 0.), Vector(0., 1., 0.));
+    Polygon::new(vec![
+        Vertex::new(Vector(0., 0., 0.), Vector(0., 0., 1.)),
+        Vertex::new(Vector(1., 0., 0.), Vector(0., 0., 1.)),
+        Vertex::new(Vector(0., 1., 0.), Vector(0., 0., 1.)),
+    ]);
     Vector(0., 0., 0.);
+    Csg::new();
 }
 
 /// Create a cube, make sure it's inside a bounding box.
