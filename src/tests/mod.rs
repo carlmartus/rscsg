@@ -57,3 +57,8 @@ fn csg_total_subtraction() {
 
     assert_eq!(0, polys.len());
 }
+
+#[test]
+fn csg_sphere() {
+    Csg::sphere(Vector(0., 0., 0.), 1.0, 10, 5);
+}
