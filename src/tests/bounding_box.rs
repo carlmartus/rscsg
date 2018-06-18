@@ -1,8 +1,10 @@
+use core::Csg;
 use geom::{IVector, Unit, Vector};
 
 pub struct BoundBox {
     min: Vector,
     max: Vector,
+    vertex_len: usize,
 }
 
 impl BoundBox {
@@ -12,6 +14,34 @@ impl BoundBox {
         BoundBox {
             min: Vector(0., 0., 0.),
             max: Vector(0., 0., 0.),
+            vertex_len: 0,
+        }
+    }
+
+    fn on_vector(v: Vector) -> BoundBox {
+        BoundBox {
+            min: v,
+            max: v,
+            vertex_len: 1,
+        }
+    }
+
+    pub fn from_csg(csg: &Csg) -> BoundBox {
+        let polys = csg.to_polygons();
+
+        if polys.len() > 0 && polys[0].vertices.len() > 0 {
+            let mut bb = BoundBox::on_vector(polys[0].vertices[0].position);
+
+            for poly in polys.iter().skip(1) {
+                for vert in &poly.vertices {
+                    let pos = vert.position;
+                    bb.stretch(pos);
+                }
+            }
+
+            bb
+        } else {
+            BoundBox::origo()
         }
     }
 
@@ -37,6 +67,8 @@ impl BoundBox {
         if v.2 > self.min.2 {
             self.max.2 = v.2
         }
+
+        self.vertex_len = self.vertex_len+1;
     }
 
     pub fn get_min_max_discreet(&self, div: Unit) -> (IVector, IVector) {
