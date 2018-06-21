@@ -76,6 +76,11 @@ impl Vector {
 
         IVector(conv(self.0, step), conv(self.1, step), conv(self.2, step))
     }
+
+    /// Make a new vector which is orthogonal to `self`.
+    pub fn make_orthogonal(&self) -> Vector {
+        *self
+    }
 }
 
 impl Add for Vector {

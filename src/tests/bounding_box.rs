@@ -29,6 +29,8 @@ impl BoundBox {
     pub fn from_csg(csg: &Csg) -> BoundBox {
         let polys = csg.to_polygons();
 
+        println!("M {}", polys.len());
+
         if polys.len() > 0 && polys[0].vertices.len() > 0 {
             let mut bb = BoundBox::on_vector(polys[0].vertices[0].position);
 
@@ -68,7 +70,7 @@ impl BoundBox {
             self.max.2 = v.2
         }
 
-        self.vertex_len = self.vertex_len+1;
+        self.vertex_len = self.vertex_len + 1;
     }
 
     pub fn get_min_max_discreet(&self, div: Unit) -> (IVector, IVector) {

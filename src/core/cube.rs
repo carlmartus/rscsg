@@ -2,11 +2,17 @@ use core::Csg;
 use geom::{Polygon, Unit, Vector, Vertex};
 
 impl Csg {
-    /// * `cen` -  Center of cube
     /// * `dim` - Dimensions of cube
-    pub fn cube(cen: Vector, dim: Vector) -> Csg {
-        fn dim_coord(cen: Unit, dim: Unit, test: i32) -> Unit {
-            cen + if test > 0 { dim } else { -dim }
+    pub fn cube(dim: Vector, center: bool) -> Csg {
+
+        fn dim_coord(dim: Unit, test: i32, center: bool) -> Unit {
+            let offset = if test > 0 {
+                dim
+            } else {
+                0.0
+            };
+
+            offset + if center { -dim*0.5 } else { 0.0 }
         }
 
         Csg::from_polygons(
@@ -22,9 +28,9 @@ impl Csg {
                     let verts: Vec<Vertex> = bit.iter()
                         .map(|bit_coord| {
                             let position = Vector(
-                                dim_coord(cen.0, dim.0, bit_coord & 0b001),
-                                dim_coord(cen.1, dim.1, bit_coord & 0b010),
-                                dim_coord(cen.2, dim.2, bit_coord & 0b100),
+                                dim_coord(dim.0, bit_coord & 0b001, center),
+                                dim_coord(dim.1, bit_coord & 0b010, center),
+                                dim_coord(dim.2, bit_coord & 0b100, center),
                             );
 
                             Vertex::new(position, *normal)

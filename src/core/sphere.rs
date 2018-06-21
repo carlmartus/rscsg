@@ -2,15 +2,15 @@ use core::Csg;
 use geom::{Polygon, Unit, Vector, Vertex, UNIT_PI};
 
 impl Csg {
-    pub fn sphere(cen: Vector, radius: Unit, slices: usize, stacks: usize) -> Csg {
-        fn make_vertex(cen: Vector, radius: Unit, theta: Unit, phi: Unit) -> Vertex {
+    pub fn sphere(radius: Unit, slices: usize, stacks: usize) -> Csg {
+        fn make_vertex(radius: Unit, theta: Unit, phi: Unit) -> Vertex {
             let d = Vector(
                 theta.cos() * phi.sin(),
                 theta.sin() * phi.cos(),
                 theta.cos(),
             );
 
-            Vertex::new(cen + d * radius, d)
+            Vertex::new(d * radius, d)
         };
 
         let mut polys: Vec<Polygon> = Vec::new();
@@ -28,9 +28,9 @@ impl Csg {
             //  |/
             //  +
             polys.push(Polygon::new(vec![
-                make_vertex(cen, radius, i0 * delta_theta, 0.0),
-                make_vertex(cen, radius, i0 * delta_theta, delta_phi),
-                make_vertex(cen, radius, i1 * delta_theta, delta_phi),
+                make_vertex(radius, i0 * delta_theta, 0.0),
+                make_vertex(radius, i0 * delta_theta, delta_phi),
+                make_vertex(radius, i1 * delta_theta, delta_phi),
             ]));
 
             // Top
@@ -42,9 +42,9 @@ impl Csg {
             let j1 = j0 + 1.0;
 
             polys.push(Polygon::new(vec![
-                make_vertex(cen, radius, i0 * delta_theta, j0 * delta_phi),
-                make_vertex(cen, radius, i1 * delta_theta, j0 * delta_phi),
-                make_vertex(cen, radius, i0 * delta_theta, j1 * delta_phi),
+                make_vertex(radius, i0 * delta_theta, j0 * delta_phi),
+                make_vertex(radius, i1 * delta_theta, j0 * delta_phi),
+                make_vertex(radius, i0 * delta_theta, j1 * delta_phi),
             ]));
         }
 
@@ -66,31 +66,31 @@ impl Csg {
                 let i2 = i0 + 1.0;
 
                 polys.push(Polygon::new(vec![
-                    make_vertex(cen, radius, i1 * delta_theta, j1 * delta_phi),
-                    make_vertex(cen, radius, i2 * delta_theta, j2 * delta_phi),
-                    make_vertex(cen, radius, i0 * delta_theta, j2 * delta_phi),
+                    make_vertex(radius, i1 * delta_theta, j1 * delta_phi),
+                    make_vertex(radius, i2 * delta_theta, j2 * delta_phi),
+                    make_vertex(radius, i0 * delta_theta, j2 * delta_phi),
                 ]));
 
                 polys.push(Polygon::new(vec![
-                    make_vertex(cen, radius, i1 * delta_theta, j1 * delta_phi),
-                    make_vertex(cen, radius, i0 * delta_theta, j0 * delta_phi),
-                    make_vertex(cen, radius, i2 * delta_theta, j0 * delta_phi),
+                    make_vertex(radius, i1 * delta_theta, j1 * delta_phi),
+                    make_vertex(radius, i0 * delta_theta, j0 * delta_phi),
+                    make_vertex(radius, i2 * delta_theta, j0 * delta_phi),
                 ]));
 
                 polys.push(Polygon::new(vec![
-                    make_vertex(cen, radius, i1 * delta_theta, j1 * delta_phi),
-                    make_vertex(cen, radius, i0 * delta_theta, j2 * delta_phi),
-                    make_vertex(cen, radius, i0 * delta_theta, j0 * delta_phi),
+                    make_vertex(radius, i1 * delta_theta, j1 * delta_phi),
+                    make_vertex(radius, i0 * delta_theta, j2 * delta_phi),
+                    make_vertex(radius, i0 * delta_theta, j0 * delta_phi),
                 ]));
 
                 polys.push(Polygon::new(vec![
-                    make_vertex(cen, radius, i1 * delta_theta, j1 * delta_phi),
-                    make_vertex(cen, radius, i2 * delta_theta, j0 * delta_phi),
-                    make_vertex(cen, radius, i2 * delta_theta, j2 * delta_phi),
+                    make_vertex(radius, i1 * delta_theta, j1 * delta_phi),
+                    make_vertex(radius, i2 * delta_theta, j0 * delta_phi),
+                    make_vertex(radius, i2 * delta_theta, j2 * delta_phi),
                 ]));
             }
         }
 
-        Csg::new() // TODO placeholder
+        Csg::from_polygons(polys)
     }
 }

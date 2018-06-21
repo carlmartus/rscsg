@@ -2,7 +2,7 @@ use geom::{BspNode, Polygon, Unit, Vector, Vertex};
 
 #[derive(Clone)]
 pub struct Csg {
-    polygons: Vec<Polygon>,
+    pub polygons: Vec<Polygon>,
 }
 
 impl Csg {
@@ -63,16 +63,21 @@ impl Csg {
         new_csg
     }
 
-    pub fn translate(&mut self, v: Vector) {
+    // Transformations
+    pub fn translate(mut self, v: Vector) -> Csg {
+        // TODO implement
+
         for poly in &mut self.polygons {
             for vert in &mut poly.vertices {
                 let e = vert.position;
                 vert.position = e + v;
             }
         }
+
+        self
     }
 
-    pub fn rotate(&mut self, axis: Vector, angle_deg: Unit) {
+    pub fn rotate(mut self, axis: Vector, angle_deg: Unit) -> Csg {
         for poly in &mut self.polygons {
             for vert in &mut poly.vertices {
                 vert.position = vert.position.rotate(axis, angle_deg);
@@ -81,6 +86,8 @@ impl Csg {
                 }
             }
         }
+
+        self
     }
 
     // TODO: Needed for VTK
