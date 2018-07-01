@@ -4,15 +4,10 @@ use geom::{Polygon, Unit, Vector, Vertex};
 impl Csg {
     /// * `dim` - Dimensions of cube
     pub fn cube(dim: Vector, center: bool) -> Csg {
-
         fn dim_coord(dim: Unit, test: i32, center: bool) -> Unit {
-            let offset = if test > 0 {
-                dim
-            } else {
-                0.0
-            };
+            let offset = if test > 0 { dim } else { 0.0 };
 
-            offset + if center { -dim*0.5 } else { 0.0 }
+            offset + if center { -dim * 0.5 } else { 0.0 }
         }
 
         Csg::from_polygons(

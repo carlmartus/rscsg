@@ -64,30 +64,46 @@ impl Csg {
     }
 
     // Transformations
-    pub fn translate(mut self, v: Vector) -> Csg {
-        // TODO implement
-
+    pub fn transform_vertices<F>(mut self, func: F) -> Csg
+    where
+        F: Fn(Vertex) -> Vertex,
+    {
         for poly in &mut self.polygons {
             for vert in &mut poly.vertices {
-                let e = vert.position;
-                vert.position = e + v;
+                *vert = func(*vert);
             }
         }
-
         self
     }
 
-    pub fn rotate(mut self, axis: Vector, angle_deg: Unit) -> Csg {
-        for poly in &mut self.polygons {
-            for vert in &mut poly.vertices {
-                vert.position = vert.position.rotate(axis, angle_deg);
-                if vert.normal.length() > 0. {
-                    vert.normal = vert.normal.rotate(axis, angle_deg);
-                }
-            }
-        }
+    pub fn translate(self, v: Vector) -> Csg {
+        self.transform_vertices(|vert| Vertex {
+            position: vert.position + v,
+            ..vert
+        })
+    }
 
-        self
+    pub fn rotate(self, axis: Vector, angle_deg: Unit) -> Csg {
+        self.transform_vertices(|vert| Vertex {
+            position: vert.position.rotate(axis, angle_deg),
+            normal: if vert.normal.length() > 0. {
+                vert.normal.rotate(axis, angle_deg)
+            } else {
+                vert.normal
+            },
+            ..vert
+        })
+    }
+
+    pub fn scale(self, v: Vector) -> Csg {
+        self.transform_vertices(|vert| Vertex {
+            position: Vector(
+                vert.position.0 * v.0,
+                vert.position.1 * v.1,
+                vert.position.2 * v.2,
+            ),
+            ..vert
+        })
     }
 
     // TODO: Needed for VTK
