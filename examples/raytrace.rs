@@ -1,14 +1,28 @@
+/*
+ * Example using *RsCSG* with *smallpt* (raytracer).
+ *
+ * Warning, the output of this example is not good looking =/
+ */
+
 extern crate png;
+extern crate rscsg;
 extern crate smallpt;
 
+use rscsg::core::Csg;
+use rscsg::geom::Vector;
+
 use png::HasParameters;
-use smallpt::{saturate, tonemap, trace, Camera, Float3, Material, Rectangle, Scene, Sphere, BSDF};
+use smallpt::{
+    saturate, tonemap, trace, Camera, Float3, Material, Rectangle, Scene, Triangle, BSDF,
+};
 use std::fs::File;
 use std::io::BufWriter;
 use std::path::Path;
 
-const WIDTH: usize = 256;
+const WIDTH: usize = 80;
 const HEIGHT: usize = WIDTH;
+
+const PNG_OUTPUT: &str = "/tmp/rscsg_raytrace.png";
 
 fn main() {
     println!("Creating scene...");
@@ -31,12 +45,11 @@ fn main() {
         &camera,
         WIDTH,
         HEIGHT,
-        200,
+        800,
         &mut backbuffer,
         &mut num_rays,
     );
 
-    //let bitmap: [u8; WIDTH * HEIGHT * 4] = backbuffer
     println!("Creating bitmap...");
     let bitmap: Vec<u8> = backbuffer
         .iter()
@@ -51,8 +64,8 @@ fn main() {
         })
         .collect();
 
-    println!("Exporting png...");
-    let path = Path::new("/tmp/rscsg_raytrace.png");
+    println!("Exporting png ({})...", PNG_OUTPUT);
+    let path = Path::new(PNG_OUTPUT);
     let file = File::create(path).unwrap();
     let ref mut w = BufWriter::new(file);
 
@@ -66,8 +79,23 @@ fn main() {
 }
 
 fn create_scene() -> Scene {
+    let cube = Csg::cube(Vector(80., 80., 80.), true);
+
     let mut scene = Scene::init();
 
+    let triangle_material =
+        Material::new(Float3::zero(), Float3::new(0.4, 0.4, 1.0), BSDF::Diffuse);
+
+    cube.iter_triangles(|tri| {
+        scene.add(Box::new(Triangle::new(
+            vec_to_float3(tri.positions[0]),
+            vec_to_float3(tri.positions[1]),
+            vec_to_float3(tri.positions[2]),
+            triangle_material,
+        )));
+    });
+
+    // Light
     scene.add(Box::new(Rectangle::new(
         Float3::new(50.0, 81.5, 50.0),
         Float3::new(0.0, -1.0, 0.0),
@@ -78,11 +106,9 @@ fn create_scene() -> Scene {
         Material::new(Float3::new(12.0, 12.0, 12.0), Float3::zero(), BSDF::Diffuse),
     )));
 
-    scene.add(Box::new(Sphere::new(
-        16.5,
-        Float3::new(73.0, 16.5, 78.0),
-        Material::new(Float3::zero(), Float3::new(0.25, 0.25, 0.75), BSDF::Diffuse),
-    )));
-
     return scene;
+}
+
+fn vec_to_float3(v: Vector) -> Float3 {
+    Float3::new(v.0, v.1, v.2)
 }

@@ -1,4 +1,4 @@
-use geom::{BspNode, Polygon, Unit, Vector, Vertex};
+use geom::{BspNode, Polygon, Triangle, Unit, Vector, Vertex};
 
 #[derive(Clone)]
 pub struct Csg {
@@ -37,12 +37,10 @@ impl Csg {
             let mid_vert = Vertex::new(mid_pos, mid_nor);
 
             let len_verts = poly.vertices.len();
-            // TODO Concat with poly.vertices
             let mut gen_verts: Vec<Vertex> = (0..len_verts)
                 .map(|i| poly.vertices[i].interpolate(poly.vertices[(i + 1) % len_verts], 0.5))
                 .collect();
 
-            //let new_verts = append(&mut poly.vertices.clone());
             let mut new_verts = poly.vertices.clone();
             new_verts.append(&mut gen_verts);
             new_verts.push(mid_vert);
@@ -61,6 +59,27 @@ impl Csg {
         }
 
         new_csg
+    }
+
+    // Get triangles
+    pub fn iter_triangles<F>(&self, mut func: F)
+    where
+        F: FnMut(Triangle),
+    {
+        for poly in &self.polygons {
+            for i in 1..(poly.vertices.len() - 1) {
+                let v0 = poly.vertices[0].position;
+                let v1 = poly.vertices[i].position;
+                let v2 = poly.vertices[i + 1].position;
+
+                let tri = Triangle {
+                    positions: [v0, v1, v2],
+                    normal: poly.plane.0,
+                };
+
+                func(tri);
+            }
+        }
     }
 
     // Transformations
@@ -105,30 +124,6 @@ impl Csg {
             ..vert
         })
     }
-
-    // TODO: Needed for VTK
-    /*
-    pub fn to_vertices_and_polygons(&self) -> (Vec<Vertex>, Vec<Polygon>, usize) {
-        let mut verts: Vec<Vertex> = Vec::new();
-        let mut polys: Vec<Polygon> = Vec::new();
-
-        let mut vert_index: HashMap<IVector, usize> = HashMap::new();
-
-        for poly in &self.polygons {
-
-            let cell:Vec<Vertex> = Vec::new();
-            for vert in &poly.vertices {
-                cell.push(
-            }
-
-            polys.push(Polygon::new(cell);
-        }
-
-        // TODO
-
-        (verts, polys, 0)
-    }
-        */
 
     pub fn union(&self, other: &Csg) -> Csg {
         let mut a = BspNode::new(Some(self.polygons.clone()));

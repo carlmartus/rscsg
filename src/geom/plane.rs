@@ -14,7 +14,7 @@ type Collector = Vec<Polygon>;
 
 /// Represents a plane in 3D space.
 #[derive(Clone)]
-pub struct Plane(Vector, Unit);
+pub struct Plane(pub Vector, pub Unit);
 
 impl Plane {
     /// `Plane.EPSILON` is the tolerance used by `splitPolygon()` to decide if a point is on the

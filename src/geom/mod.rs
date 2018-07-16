@@ -16,3 +16,8 @@ pub type Unit = f32;
 pub const UNIT_PI: Unit = PI;
 
 pub type IUnit = i32;
+
+pub struct Triangle {
+    pub positions: [Vector; 3],
+    pub normal: Vector,
+}
