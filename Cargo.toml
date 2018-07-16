@@ -5,3 +5,11 @@ authors = ["Martin Sandgren <carlmartus@gmail.com>"]
 
 [dependencies]
 bitflags = "1.0"
+
+[[example]]
+name = "raytrace"
+path = "examples/raytrace.rs"
+
+[dev-dependencies]
+smallpt = "0.1.12"
+png = "0.12.0"

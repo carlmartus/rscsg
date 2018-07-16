@@ -11,6 +11,12 @@ The `core::Csg` consists of vertices bound together to form polygons.
 The struct has basic transformations; *translate*, *rotate* and *scale*.
 
 ## Sample
-Have a look at the [ray tracer sample code](samples/raytrace.rs).
+Have a look at the [ray tracer sample code](examples/raytrace.rs) in comination
+with the [smallpt crate](https://crates.io/crates/smallpt).
 This code will generate a small scene demonstrating some of the available
 procedures.
+
+Execute the ray trace sample with:
+```shell
+cargo run --example raytrace
+```
