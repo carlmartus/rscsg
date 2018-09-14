@@ -1,4 +1,5 @@
-use geom::{Unit, Vector};
+use dim3::Vector;
+use Unit;
 
 /// Represents a vertex of a polygon. Use your own vertex class instead of this one to provide
 /// additional features like texture coordinates and vertex colors. Custom vertex classes need to

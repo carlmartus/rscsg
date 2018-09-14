@@ -1,4 +1,4 @@
-use geom::{Plane, Polygon};
+use dim3::{Plane, Polygon};
 
 /// Holds a node in a BSP tree. A BSP tree is built from a collection of polygons by picking a
 /// polygon to split along. That polygon (and all other coplanar polygons) are added directly to

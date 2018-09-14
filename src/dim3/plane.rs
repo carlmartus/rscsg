@@ -1,4 +1,5 @@
-use geom::{Polygon, Unit, Vector, Vertex};
+use dim3::{Polygon, Vector, Vertex};
+use Unit;
 
 bitflags! {
     struct Location: u32 {

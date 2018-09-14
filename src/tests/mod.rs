@@ -1,8 +1,7 @@
 mod bounding_box;
 
 use self::bounding_box::BoundBox;
-use core::Csg;
-use geom::{BspNode, Plane, Polygon, Vector, Vertex};
+use dim3::{BspNode, Csg, Plane, Polygon, Vector, Vertex};
 
 #[test]
 fn types() {

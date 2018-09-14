@@ -1,4 +1,5 @@
-use geom::{BspNode, Polygon, Triangle, Unit, Vector, Vertex};
+use dim3::{BspNode, Polygon, Triangle, Vector, Vertex};
+use Unit;
 
 #[derive(Clone)]
 pub struct Csg {

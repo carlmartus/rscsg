@@ -1,5 +1,5 @@
-use core::Csg;
-use geom::{IVector, Unit, Vector};
+use dim3::{Csg, IVector, Vector};
+use Unit;
 
 pub struct BoundBox {
     min: Vector,

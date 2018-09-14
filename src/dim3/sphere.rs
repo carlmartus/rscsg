@@ -1,5 +1,6 @@
-use core::Csg;
-use geom::{Polygon, Unit, Vector, Vertex, UNIT_PI};
+use dim3::Csg;
+use dim3::{Polygon, Vector, Vertex};
+use {Unit, UNIT_PI};
 
 impl Csg {
     pub fn sphere(radius: Unit, slices: usize, stacks: usize) -> Csg {

@@ -1,5 +1,6 @@
-use core::Csg;
-use geom::{Polygon, Unit, Vector, Vertex};
+use dim3::Csg;
+use dim3::{Polygon, Vector, Vertex};
+use Unit;
 
 impl Csg {
     /// * `dim` - Dimensions of cube

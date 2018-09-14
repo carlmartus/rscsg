@@ -1,13 +1,13 @@
-use geom::{IUnit, Unit, UNIT_PI};
 use std::hash::{Hash, Hasher};
 use std::ops::{Add, Div, Mul, Neg, Sub};
+use {IUnit, Unit, UNIT_PI};
 
 /// Represents a 3D vector.
 ///
 /// Example usage:
 ///
 /// ```
-/// use rscsg::geom::Vector;
+/// use rscsg::dim3::Vector;
 /// Vector(1f32, 2f32, 3f32);
 /// ```
 

@@ -8,8 +8,7 @@ extern crate png;
 extern crate rscsg;
 extern crate smallpt;
 
-use rscsg::core::Csg;
-use rscsg::geom::Vector;
+use rscsg::dim3::{Csg, Vector};
 
 use png::HasParameters;
 use smallpt::{
