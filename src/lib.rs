@@ -1,3 +1,4 @@
+pub mod dim2;
 pub mod dim3;
 
 #[macro_use]

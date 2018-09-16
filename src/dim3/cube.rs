@@ -21,7 +21,8 @@ impl Csg {
                 ([0b100, 0b101, 0b111, 0b110], Vector(0., 0., 1.)),
             ].iter()
                 .map(|(bit, normal)| {
-                    let verts: Vec<Vertex> = bit.iter()
+                    let verts: Vec<Vertex> = bit
+                        .iter()
                         .map(|bit_coord| {
                             let position = Vector(
                                 dim_coord(dim.0, bit_coord & 0b001, center),
