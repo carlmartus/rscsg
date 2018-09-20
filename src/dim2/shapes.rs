@@ -1,5 +1,5 @@
 use dim2::{Csg, LineStrip, Point};
-use Unit;
+use {Unit, UNIT_PI};
 
 pub fn rectangle(lo: Point, hi: Point) -> Csg {
     LineStrip::new(hi)
@@ -11,5 +11,10 @@ pub fn rectangle(lo: Point, hi: Point) -> Csg {
 }
 
 pub fn sphere(center: Point, radius: Unit, steps: usize) -> Csg {
-    // TODO: Implement
+    /*
+    for i in 0..steps {
+        let angle = ((i as f32) / (steps as f32)) * UNIT_PI*2f32;
+    }*/
+
+    Csg::new() // TODO Placeholder
 }

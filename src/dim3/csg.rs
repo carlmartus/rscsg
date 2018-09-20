@@ -29,8 +29,7 @@ impl Csg {
                 continue;
             }
 
-            let mid_pos = poly
-                .vertices
+            let mid_pos = poly.vertices
                 .iter()
                 .fold(Vector(0f32, 0f32, 0f32), |acc, v| acc + v.position)
                 / (poly.vertices.len() as f32);
