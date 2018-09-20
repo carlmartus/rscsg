@@ -92,6 +92,7 @@ impl Csg {
             for vert in &mut poly.vertices {
                 *vert = func(*vert);
             }
+            // TODO Update plane
         }
         self
     }
