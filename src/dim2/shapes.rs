@@ -11,11 +11,15 @@ pub fn rectangle(lo: Point, hi: Point) -> Csg {
         .build()
 }
 
-pub fn sphere(center: Point, radius: Unit, steps: usize) -> Csg {
-    /*
-    for i in 0..steps {
-        let angle = ((i as f32) / (steps as f32)) * UNIT_PI*2f32;
-    }*/
-
-    Csg::new() // TODO Placeholder
+pub fn circle(center: Point, radius: Unit, steps: usize) -> Csg {
+    (0..steps)
+        .fold(LineStrip::new(), |ls, i| {
+            let angle = ((i as f32) / (steps as f32)) * UNIT_PI * 2f32;
+            ls.line_to(Point(
+                center.0 + radius * angle.cos(),
+                center.1 + radius * angle.sin(),
+            ))
+        })
+        .enclose()
+        .build()
 }
