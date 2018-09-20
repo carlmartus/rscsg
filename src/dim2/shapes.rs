@@ -2,7 +2,8 @@ use dim2::{Csg, LineStrip, Point};
 use {Unit, UNIT_PI};
 
 pub fn rectangle(lo: Point, hi: Point) -> Csg {
-    LineStrip::new(hi)
+    LineStrip::new()
+        .line_to(hi)
         .line_to(Point(hi.0, lo.1))
         .line_to(Point(lo.0, lo.1))
         .line_to(Point(lo.0, hi.1))

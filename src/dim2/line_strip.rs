@@ -6,9 +6,9 @@ pub struct LineStrip {
 }
 
 impl LineStrip {
-    pub fn new(start: Point) -> LineStrip {
+    pub fn new() -> LineStrip {
         LineStrip {
-            items: vec![start],
+            items: Vec::new(),
             enclosed: false,
         }
     }
