@@ -1,5 +1,5 @@
 use dim3::{Polygon, Vector, Vertex};
-use Unit;
+use {Unit, EPSILON};
 
 bitflags! {
     struct Location: u32 {
@@ -18,10 +18,6 @@ type Collector = Vec<Polygon>;
 pub struct Plane(pub Vector, pub Unit);
 
 impl Plane {
-    /// `Plane.EPSILON` is the tolerance used by `splitPolygon()` to decide if a point is on the
-    /// plane.
-    pub const EPSILON: Unit = 0.00001;
-
     pub fn from_points(v0: Vector, v1: Vector, v2: Vector) -> Plane {
         let n = (v1 - v0).cross(v2 - v0).normalize();
         Plane(n, n.dot(v0))
@@ -51,9 +47,9 @@ impl Plane {
             let t = self.0.dot(v.position) - self.1;
 
             let loc = {
-                if t < -Plane::EPSILON {
+                if t < -EPSILON {
                     Location::BACK
-                } else if t > Plane::EPSILON {
+                } else if t > EPSILON {
                     Location::FRONT
                 } else {
                     Location::COPLANAR
@@ -85,7 +81,7 @@ impl Plane {
                 for (i, v) in poly.vertices.iter().enumerate() {
                     let j = (i + 1) % vertices_num;
                     let ti = vertex_locs[i];
-                    let tj = vertex_locs[i];
+                    let tj = vertex_locs[j];
                     let vi = v.clone();
                     let vj = poly.vertices[j];
 
@@ -94,11 +90,7 @@ impl Plane {
                     }
 
                     if ti != Location::FRONT {
-                        if ti != Location::BACK {
-                            b.push(vi);
-                        } else {
-                            b.push(vi);
-                        }
+                        b.push(vi);
                     }
 
                     if (ti | tj) == Location::SPANNING {

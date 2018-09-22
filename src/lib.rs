@@ -11,5 +11,6 @@ use std::f32::consts::PI;
 
 pub type Unit = f32;
 pub const UNIT_PI: Unit = PI;
+pub const EPSILON: Unit = 0.00001;
 
 pub type IUnit = i32;
