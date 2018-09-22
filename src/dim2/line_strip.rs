@@ -13,7 +13,7 @@ impl LineStrip {
         }
     }
 
-    pub fn from_vec(points: Vec<Point>) -> LineStrip {
+    pub fn from_points(points: Vec<Point>) -> LineStrip {
         LineStrip {
             points,
             enclosed: false,
@@ -30,13 +30,17 @@ impl LineStrip {
         self
     }
 
-    pub fn build(self) -> Csg {
+    pub fn build(&self) -> Csg {
+        Csg::from_lines(self.build_lines())
+    }
+
+    pub fn build_lines(&self) -> Vec<Line> {
         let mut lines: Vec<Line> = Vec::new();
 
         for i in 1..self.points.len() {
             lines.push(Line::new(self.points[i - 1], self.points[i]));
         }
 
-        Csg::from_lines(lines)
+        lines
     }
 }

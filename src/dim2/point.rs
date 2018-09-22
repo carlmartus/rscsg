@@ -24,6 +24,10 @@ impl Point {
     pub fn normalize(&self) -> Point {
         *self / self.length()
     }
+
+    pub fn interpolate(&self, other: &Point, weight: f32) -> Point {
+        *self + (*other - *self) * weight
+    }
 }
 
 impl Add for Point {
