@@ -11,8 +11,8 @@ impl Plane {
     }
 
     pub fn flip(&self) -> Plane {
-        Plane(Point.negate(), -self.1);
+        Plane(self.0.negate(), -self.1)
     }
 
-    pub fn split_polygon(&self, // TODO How is this comparable to a 3D plane?
+    //pub fn split_lines(&self, // TODO How is this comparable to a 3D plane?
 }

@@ -1,27 +1,27 @@
-use dim2::{Csg, Point};
+use dim2::{Csg, Line, Point};
 
 pub struct LineStrip {
-    items: Vec<Point>,
+    points: Vec<Point>,
     enclosed: bool,
 }
 
 impl LineStrip {
     pub fn new() -> LineStrip {
         LineStrip {
-            items: Vec::new(),
+            points: Vec::new(),
             enclosed: false,
         }
     }
 
-    pub fn from_vec(items: Vec<Point>) -> LineStrip {
+    pub fn from_vec(points: Vec<Point>) -> LineStrip {
         LineStrip {
-            items,
+            points,
             enclosed: false,
         }
     }
 
     pub fn line_to(mut self, next: Point) -> LineStrip {
-        self.items.push(next);
+        self.points.push(next);
         self
     }
 
@@ -31,6 +31,12 @@ impl LineStrip {
     }
 
     pub fn build(self) -> Csg {
-        Csg::from_points(self.items)
+        let mut lines: Vec<Line> = Vec::new();
+
+        for i in 1..self.points.len() {
+            lines.push(Line::new(self.points[i - 1], self.points[i]));
+        }
+
+        Csg::from_lines(lines)
     }
 }

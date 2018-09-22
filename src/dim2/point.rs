@@ -20,6 +20,10 @@ impl Point {
     pub fn orthogonal(&self) -> Point {
         Point(-self.1, self.0)
     }
+
+    pub fn normalize(&self) -> Point {
+        *self / self.length()
+    }
 }
 
 impl Add for Point {
