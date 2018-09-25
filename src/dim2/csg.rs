@@ -64,4 +64,42 @@ impl Csg {
 
         Csg::from_lines(a.all_lines())
     }
+
+    pub fn subtract(a: &Csg, b: &Csg) -> Csg {
+        let mut bsp_a = BspNode::new(Some(a.lines.clone()));
+        let mut bsp_b = BspNode::new(Some(b.lines.clone()));
+
+        bsp_a.invert();
+        bsp_a.clip_to(&mut bsp_b);
+        bsp_b.clip_to(&mut bsp_a);
+        bsp_b.invert();
+        bsp_b.clip_to(&mut bsp_a);
+        bsp_b.invert();
+        bsp_a.build(bsp_b.all_lines());
+        bsp_a.invert();
+
+        Csg::from_lines(bsp_a.all_lines())
+    }
+
+    pub fn intersect(&self, other: &Csg) -> Csg {
+        let mut a = BspNode::new(Some(self.lines.clone()));
+        let mut b = BspNode::new(Some(other.lines.clone()));
+
+        a.invert();
+        b.clip_to(&mut a);
+        b.invert();
+        a.clip_to(&mut b);
+        b.clip_to(&mut a);
+        a.build(b.all_lines());
+        a.invert();
+        Csg::from_lines(a.all_lines())
+    }
+
+    pub fn inverse(&self) -> Csg {
+        let mut csg = self.clone();
+        for line in csg.lines.iter_mut() {
+            line.flip();
+        }
+        csg
+    }
 }
