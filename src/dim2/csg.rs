@@ -1,4 +1,4 @@
-use dim2::{Line, Point};
+use dim2::{BspNode, Line, Point};
 use {Unit, UNIT_PI};
 
 #[derive(Clone)]
@@ -25,8 +25,8 @@ impl Csg {
         F: Fn(Point) -> Point,
     {
         for line in &mut self.lines {
-            let p0 = func(line.0);
-            let p1 = func(line.1);
+            let p0 = func(line.p0);
+            let p1 = func(line.p1);
             *line = Line::new(p0, p1);
         }
         self
@@ -49,5 +49,19 @@ impl Csg {
     /// Scale around origo
     pub fn scale(self, scale_axises: Point) -> Csg {
         self.transform_points(|p| Point(p.0 * scale_axises.0, p.1 * scale_axises.1))
+    }
+
+    pub fn union(&self, other: &Csg) -> Csg {
+        let mut a = BspNode::new(Some(self.lines.clone()));
+        let mut b = BspNode::new(Some(other.lines.clone()));
+
+        a.clip_to(&mut b);
+        b.clip_to(&mut a);
+        b.invert();
+        b.clip_to(&mut a);
+        b.invert();
+        a.build(b.all_lines());
+
+        Csg::from_lines(a.all_lines())
     }
 }

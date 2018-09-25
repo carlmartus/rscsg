@@ -37,7 +37,7 @@ impl Plane {
         let mut polygon_type = Location::NONE;
         let mut point_locs = vec![Location::NONE; 2];
 
-        for (i, &point) in [line.0, line.1].iter().enumerate() {
+        for (i, &point) in [line.p0, line.p1].iter().enumerate() {
             let t = self.0.dot(point) - self.1;
 
             let loc = {
@@ -56,7 +56,7 @@ impl Plane {
 
         match polygon_type {
             Location::COPLANAR => {
-                if self.0.dot(line.0) > (0 as Unit) {
+                if self.0.dot(line.p0) > (0 as Unit) {
                     coplane_front.push(line);
                 } else {
                     coplane_back.push(line);
@@ -68,14 +68,14 @@ impl Plane {
                 let mut f: Vec<Point> = Vec::new();
                 let mut b: Vec<Point> = Vec::new();
 
-                for (i, (p0, p1)) in [(line.0, line.1), (line.1, line.0)].iter().enumerate() {
+                for (i, (p0, p1)) in [(line.p0, line.p1), (line.p1, line.p0)].iter().enumerate() {
                     let j = (i + 1) & 0b1;
                     if point_locs[i] != Location::BACK {
-                        f.push(line.0);
+                        f.push(line.p0);
                     }
 
                     if point_locs[i] != Location::FRONT {
-                        b.push(line.0);
+                        b.push(line.p0);
                     }
 
                     if (point_locs[i] | point_locs[j]) == Location::SPANNING {

@@ -1,14 +1,26 @@
 use dim2::{Plane, Point};
 
 #[derive(Clone)]
-pub struct Line(pub Point, pub Point, pub Plane);
+pub struct Line {
+    pub p0: Point,
+    pub p1: Point,
+    pub plane: Plane,
+}
 
 impl Line {
     pub fn new(p0: Point, p1: Point) -> Line {
-        Line(p0, p1, Plane::from_points(p0, p1))
+        Line {
+            p0,
+            p1,
+            plane: Plane::from_points(p0, p1),
+        }
     }
 
     pub fn flip(&self) -> Line {
-        Line(self.1, self.0, self.2.flip())
+        Line {
+            p0: self.p1,
+            p1: self.p0,
+            plane: self.plane.flip(),
+        }
     }
 }

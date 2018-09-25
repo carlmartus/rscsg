@@ -1,4 +1,4 @@
-use dim2::{Plane, Line};
+use dim2::{Line, Plane};
 
 #[derive(Clone)]
 pub struct BspNode {
@@ -18,15 +18,15 @@ impl BspNode {
         };
 
         match lines {
-            Some(polygons) => bsp.build(polygons),
+            Some(lines) => bsp.build(lines),
             _ => (),
         };
         bsp
     }
 
     pub fn invert(&mut self) {
-        for p in self.polygons.iter_mut() {
-            p.flip();
+        for l in self.lines.iter_mut() {
+            l.flip();
         }
 
         if self.plane.is_some() {
@@ -59,8 +59,8 @@ impl BspNode {
         for mut line in lines {
             let mut second_front: Vec<Line> = Vec::new();
             let mut second_back: Vec<Line> = Vec::new();
-            self.plane.as_mut().unwrap().split_polygon(
-                &mut line,
+            self.plane.as_mut().unwrap().split_lines(
+                line.clone(),
                 &mut front,
                 &mut back,
                 &mut second_front,
@@ -71,18 +71,93 @@ impl BspNode {
         }
 
         let mut front = if self.front.is_some() {
-            self.front.as_mut().unwrap().clip_polygons(&mut front)
+            self.front.as_mut().unwrap().clip_lines(&mut front)
         } else {
             front
         };
 
         let mut back = if self.back.is_some() {
-            self.back.as_mut().unwrap().clip_polygons(&mut back)
+            self.back.as_mut().unwrap().clip_lines(&mut back)
         } else {
             Vec::new()
         };
 
         front.append(&mut back);
         front
+    }
+
+    pub fn clip_to(&mut self, bsp: &mut BspNode) {
+        self.lines = bsp.clip_lines(&self.lines);
+
+        if self.front.is_some() {
+            self.front.as_mut().unwrap().clip_to(bsp);
+        }
+
+        if self.back.is_some() {
+            self.back.as_mut().unwrap().clip_to(bsp);
+        }
+    }
+
+    pub fn all_lines(&self) -> Vec<Line> {
+        let mut lines: Vec<Line> = self.lines.clone();
+        self.fill_lines(&mut lines);
+        lines
+    }
+
+    fn fill_lines(&self, lines: &mut Vec<Line>) {
+        lines.append(&mut self.lines.clone());
+
+        if self.front.is_some() {
+            self.front.as_ref().unwrap().fill_lines(lines);
+        }
+
+        if self.back.is_some() {
+            self.back.as_ref().unwrap().fill_lines(lines);
+        }
+    }
+
+    pub fn build(&mut self, lines: Vec<Line>) {
+        if lines.len() == 0 {
+            return;
+        }
+
+        if self.plane.is_none() {
+            self.plane = Some(lines[0].plane.clone());
+        }
+
+        let plane = self.plane.clone().unwrap();
+
+        self.lines.push(lines[0].clone());
+        let mut front: Vec<Line> = Vec::new();
+        let mut back: Vec<Line> = Vec::new();
+
+        for line in lines.iter().skip(1) {
+            let mut second: Vec<Line> = Vec::new();
+
+            plane.split_lines(
+                line.clone(),
+                &mut self.lines,
+                &mut second,
+                &mut front,
+                &mut back,
+            );
+            self.lines.append(&mut second);
+        }
+
+        if front.len() > 0 {
+            if self.front.is_none() {
+                self.front = Some(Box::new(BspNode::new(None)));
+            }
+
+            self.front.as_mut().unwrap().build(front);
+        }
+
+        if back.len() > 0 {
+            if self.back.is_none() {
+                self.back = Some(Box::new(BspNode::new(None)));
+            }
+
+            self.back.as_mut().unwrap().build(back);
+        }
     }
 }

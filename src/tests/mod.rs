@@ -1,4 +1,5 @@
 mod bounding_box;
+mod dim2;
 
 use self::bounding_box::BoundBox;
 use dim3::{BspNode, Csg, Plane, Polygon, Vector, Vertex};

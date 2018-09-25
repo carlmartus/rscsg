@@ -1,3 +1,4 @@
+mod bsp_node;
 mod csg;
 mod line;
 mod line_strip;
@@ -5,6 +6,7 @@ mod plane;
 mod point;
 mod shapes;
 
+pub use self::bsp_node::BspNode;
 pub use self::csg::Csg;
 pub use self::line::Line;
 pub use self::line_strip::LineStrip;
