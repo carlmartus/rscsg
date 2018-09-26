@@ -1,9 +1,10 @@
 # Rust CSG
 Constructive Solid Geometry in Rust.
-Create 3D objects using nothing but Rust code.
+Create 2D and/or 3D objects using nothing but Rust code.
 Combine boolean operations like *union*, *subtraction* and *intersection*.
 
 This library started as a port of [pycsg](https://github.com/timknip/pycsg/).
+With added operations for 2D objects.
 
 ## The *Csg* structure
 The `rscsg::dim3::Csg` consists of vertices bound together to form polygons.
@@ -20,3 +21,11 @@ execute the ray trace sample with:
 ```shell
 cargo run --example raytrace
 ```
+
+## Roadmap
+- [X] Basic 3D CSG.
+- [X] Basic 2D CSG.
+- [ ] Real time 3D sample.
+- [ ] [2D to 3D extractions](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Using_the_2D_Subsystem#Linear_Extrude).
+- [ ] Add shared date component to CSG obejcts.
+- [ ] Export to known format(s).
