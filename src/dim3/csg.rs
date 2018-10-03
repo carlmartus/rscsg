@@ -62,7 +62,7 @@ impl Csg {
         new_csg
     }
 
-    // Get triangles
+    // Read triangles
     pub fn iter_triangles<F>(&self, mut func: F)
     where
         F: FnMut(Triangle),
@@ -81,6 +81,25 @@ impl Csg {
                 func(tri);
             }
         }
+    }
+
+    pub fn get_triangles(&self) -> Vec<Triangle> {
+        let mut result = Vec::new();
+
+        for poly in &self.polygons {
+            for i in 1..(poly.vertices.len() - 1) {
+                let v0 = poly.vertices[0].position;
+                let v1 = poly.vertices[i].position;
+                let v2 = poly.vertices[i + 1].position;
+
+                result.push(Triangle {
+                    positions: [v0, v1, v2],
+                    normal: poly.plane.0,
+                });
+            }
+        }
+
+        result
     }
 
     // Transformations
