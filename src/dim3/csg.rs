@@ -176,9 +176,9 @@ impl Csg {
         Csg::from_polygons(bsp_a.all_polygons())
     }
 
-    pub fn intersect(&self, other: &Csg) -> Csg {
-        let mut a = BspNode::new(Some(self.polygons.clone()));
-        let mut b = BspNode::new(Some(other.polygons.clone()));
+    pub fn intersect(a: &Csg, b: &Csg) -> Csg {
+        let mut a = BspNode::new(Some(a.polygons.clone()));
+        let mut b = BspNode::new(Some(b.polygons.clone()));
 
         a.invert();
         b.clip_to(&mut a);
