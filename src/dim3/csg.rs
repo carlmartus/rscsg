@@ -146,9 +146,9 @@ impl Csg {
         })
     }
 
-    pub fn union(&self, other: &Csg) -> Csg {
-        let mut a = BspNode::new(Some(self.polygons.clone()));
-        let mut b = BspNode::new(Some(other.polygons.clone()));
+    pub fn union(a: &Csg, b: &Csg) -> Csg {
+        let mut a = BspNode::new(Some(a.polygons.clone()));
+        let mut b = BspNode::new(Some(b.polygons.clone()));
 
         a.clip_to(&mut b);
         b.clip_to(&mut a);

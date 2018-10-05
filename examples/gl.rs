@@ -46,7 +46,9 @@ struct Application {
 }
 
 fn generate_csg_scene() -> Csg {
-    Csg::cube(Vector(1., 1., 1.), true)
+    Csg::union(
+        &Csg::cube(Vector(1., 1., 1.), true),
+        &Csg::cube(Vector(1., 1., 1.), false))
 }
 
 fn main() {
@@ -77,8 +79,6 @@ impl Application {
             verts.push(Vertex(p0.0, p0.1, p0.2, 1, 0, 0, 0));
             verts.push(Vertex(p1.0, p1.1, p1.2, 0, 1, 0, 0));
             verts.push(Vertex(p2.0, p2.1, p2.2, 0, 0, 1, 0));
-
-            println!("Vertex {}, {}, {}", p0.0, p0.1, p0.2);
         }
         verts.prepear_graphics();
         draw::print_gl_error()?;
@@ -126,8 +126,8 @@ impl Application {
                 1.3333f32,
                 0.1f32,
                 20f32,
-                draw::Vec3(2f32, 1f32, 1f32), // Eye
-                draw::Vec3(0f32, 0f32, 0f32), // At
+                draw::Vec3(-1.4, 1., 1.2), // Eye
+                draw::Vec3(0.2, 0.2, 0.2), // At
                 draw::Vec3(0f32, 0f32, 1f32),
             ); // Center
 

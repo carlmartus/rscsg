@@ -25,7 +25,7 @@ cargo run --example raytrace
 ## Roadmap
 - [X] Basic 3D CSG.
 - [X] Basic 2D CSG.
-- [ ] Real time 3D sample.
+- [X] Real time 3D sample.
 - [ ] [2D to 3D extractions](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/Using_the_2D_Subsystem#Linear_Extrude).
 - [ ] Add shared date component to CSG obejcts.
 - [ ] Export to known format(s).
