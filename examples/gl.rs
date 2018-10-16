@@ -46,9 +46,12 @@ struct Application {
 }
 
 fn generate_csg_scene() -> Csg {
+    Csg::sphere(1.0, 8, 8)
+    /*
     Csg::union(
         &Csg::cube(Vector(1., 1., 1.), true),
         &Csg::cube(Vector(1., 1., 1.), false))
+        */
 }
 
 fn main() {
@@ -126,8 +129,8 @@ impl Application {
                 1.3333f32,
                 0.1f32,
                 20f32,
-                draw::Vec3(-1.4, 1., 1.2), // Eye
-                draw::Vec3(0.2, 0.2, 0.2), // At
+                draw::Vec3(-1.8, 1., 1.4), // Eye
+                draw::Vec3(0., 0., 0.), // At
                 draw::Vec3(0f32, 0f32, 1f32),
             ); // Center
 
