@@ -6,11 +6,7 @@ impl Csg {
     pub fn sphere(radius: Unit, slices: usize, stacks: usize) -> Csg {
         fn make_vertex(radius: Unit, theta: Unit, phi: Unit) -> Vertex {
             let phi_sin = phi.sin();
-            let d = Vector(
-                theta.cos() * phi_sin,
-                theta.sin() * phi_sin,
-                phi.cos(),
-            );
+            let d = Vector(theta.cos() * phi_sin, theta.sin() * phi_sin, phi.cos());
 
             Vertex::new(d * radius, d)
         };

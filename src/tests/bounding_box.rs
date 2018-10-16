@@ -29,8 +29,6 @@ impl BoundBox {
     pub fn from_csg(csg: &Csg) -> BoundBox {
         let polys = csg.to_polygons();
 
-        println!("M {}", polys.len());
-
         if polys.len() > 0 && polys[0].vertices.len() > 0 {
             let mut bb = BoundBox::on_vector(polys[0].vertices[0].position);
 

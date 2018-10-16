@@ -11,10 +11,10 @@ use {IUnit, Unit, UNIT_PI};
 /// Vector(1f32, 2f32, 3f32);
 /// ```
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct Vector(pub Unit, pub Unit, pub Unit);
 
-#[derive(Clone, Copy, Eq)]
+#[derive(Clone, Copy, Eq, Debug)]
 pub struct IVector(pub i32, pub i32, pub i32);
 
 impl Vector {

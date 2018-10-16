@@ -14,7 +14,7 @@ bitflags! {
 type Collector = Vec<Polygon>;
 
 /// Represents a plane in 3D space.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Plane(pub Vector, pub Unit);
 
 impl Plane {
@@ -108,7 +108,7 @@ impl Plane {
                 }
 
                 if b.len() >= 3 {
-                    front.push(Polygon::new(b));
+                    back.push(Polygon::new(b));
                 }
             }
             _ => (),
