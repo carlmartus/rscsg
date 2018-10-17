@@ -2,7 +2,7 @@ extern crate lingo;
 extern crate rscsg;
 
 use lingo::{draw, gl, window};
-use rscsg::dim3::{Csg, Vector};
+use rscsg::dim3::Csg;
 use std::mem::size_of;
 
 const SHADER_VERT: &'static str = r#"
