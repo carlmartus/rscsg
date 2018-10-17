@@ -7,14 +7,9 @@ authors = ["Martin Sandgren <carlmartus@gmail.com>"]
 bitflags = "1.0"
 
 [[example]]
-name = "raytrace"
-path = "examples/raytrace.rs"
-
-[[example]]
 name = "gl"
 path = "examples/gl.rs"
 
 [dev-dependencies]
-smallpt = "0.1.11"
 png = "0.12.0"
 lingo = { git = "https://github.com/carlmartus/lingo.git" }
