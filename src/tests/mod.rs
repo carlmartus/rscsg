@@ -47,10 +47,9 @@ fn csg_total_subtraction() {
     assert_eq!(0, polys.len());
 }
 
-/*
 #[test]
 fn csg_sphere() {
-    let sphere = Csg::sphere(1.0, 20, 20);
+    let sphere = Csg::sphere(1.0, 10, 5);
     let bb = BoundBox::from_csg(&sphere);
 
     let (d_min, d_max) = bb.get_min_max_discreet(10.);
@@ -61,4 +60,4 @@ fn csg_sphere() {
     assert_eq!(10, d_max.0);
     assert_eq!(10, d_max.1);
     assert_eq!(10, d_max.2);
-}*/
+}
