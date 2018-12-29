@@ -19,23 +19,25 @@ impl Csg {
                 ([0b010, 0b110, 0b111, 0b011], Vector(0., 1., 0.)),
                 ([0b000, 0b010, 0b011, 0b001], Vector(0., 0., -1.)),
                 ([0b100, 0b101, 0b111, 0b110], Vector(0., 0., 1.)),
-            ].iter()
-                .map(|(bit, normal)| {
-                    let verts: Vec<Vertex> = bit.iter()
-                        .map(|bit_coord| {
-                            let position = Vector(
-                                dim_coord(dim.0, bit_coord & 0b001, center),
-                                dim_coord(dim.1, bit_coord & 0b010, center),
-                                dim_coord(dim.2, bit_coord & 0b100, center),
-                            );
+            ]
+            .iter()
+            .map(|(bit, normal)| {
+                let verts: Vec<Vertex> = bit
+                    .iter()
+                    .map(|bit_coord| {
+                        let position = Vector(
+                            dim_coord(dim.0, bit_coord & 0b001, center),
+                            dim_coord(dim.1, bit_coord & 0b010, center),
+                            dim_coord(dim.2, bit_coord & 0b100, center),
+                        );
 
-                            Vertex::new(position, *normal)
-                        })
-                        .collect();
+                        Vertex::new(position, *normal)
+                    })
+                    .collect();
 
-                    Polygon::new(verts)
-                })
-                .collect(),
+                Polygon::new(verts)
+            })
+            .collect(),
         )
     }
 }

@@ -48,7 +48,11 @@ fn missed_split_triangle() {
         Vertex::new(Vector(0., 1., 0.), Vector(0., 0., 1.)),
     ]);
 
-    let plane = Plane::from_points(Vector(-1., 0., 0.), Vector(-1., 1., 0.), Vector(-1., 0., 1.));
+    let plane = Plane::from_points(
+        Vector(-1., 0., 0.),
+        Vector(-1., 1., 0.),
+        Vector(-1., 0., 1.),
+    );
 
     let mut coplane_front = Vec::new();
     let mut coplane_back = Vec::new();

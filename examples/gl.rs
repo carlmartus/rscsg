@@ -36,16 +36,24 @@ void main() {
 #[repr(C, packed)]
 struct Vertex(f32, f32, f32, u8, u8, u8, u8);
 
-struct Application {
-    win: window::Window,
-    prog: draw::Program,
+struct Scene {
     verts: draw::HwBuf<Vertex>,
     pipeline: draw::Pipeline,
-    location_mvp: draw::UniformLocation,
     vertex_count: usize,
 }
 
-fn generate_csg_scene() -> Csg {
+struct Application {
+    win: window::Window,
+    prog: draw::Program,
+    location_mvp: draw::UniformLocation,
+    scene: Scene,
+}
+
+fn generate_cube() -> Csg {
+    Csg::cube(Vector(1., 1., 1.), true)
+}
+
+fn generate_cubes() -> Csg {
     Csg::union(
         &Csg::cube(Vector(1., 1., 1.), true).rotate(Vector(1., 0., 0.), 30.),
         &Csg::cube(Vector(1., 1., 1.), false),
@@ -54,9 +62,40 @@ fn generate_csg_scene() -> Csg {
 
 fn main() {
     match Application::new() {
-        Ok(mut a) => a.run(),
+        Ok(a) => a.run(),
         Err(msg) => eprintln!("Error at start: {}", msg),
     }
+}
+
+fn make_scene<F>(generator: F) -> Result<Scene, String>
+where
+    F: FnOnce() -> Csg,
+{
+    println!("Make verts");
+    let triangles = generator().get_triangles();
+    let vertex_count = triangles.len() * 3;
+    let mut verts = draw::HwBuf::new(vertex_count, draw::Usage::Static)?;
+    for triangle in triangles {
+        let [p0, p1, p2] = triangle.positions;
+        verts.push(Vertex(p0.0, p0.1, p0.2, 1, 0, 0, 0));
+        verts.push(Vertex(p1.0, p1.1, p1.2, 0, 1, 0, 0));
+        verts.push(Vertex(p2.0, p2.1, p2.2, 0, 0, 1, 0));
+    }
+    verts.prepear_graphics();
+    draw::print_gl_error()?;
+
+    println!("Make attributes");
+    let mut pipeline = draw::Pipeline::new(draw::PrimitiveType::Triangles)?;
+    let buf_id = pipeline.push_buffer(&verts, size_of::<Vertex>());
+    pipeline.push_attribute(buf_id, 3, draw::DataType::F32, false);
+    pipeline.push_attribute(buf_id, 4, draw::DataType::U8, false);
+    draw::print_gl_error()?;
+
+    Ok(Scene {
+        verts,
+        pipeline,
+        vertex_count,
+    })
 }
 
 impl Application {
@@ -71,25 +110,7 @@ impl Application {
         let prog = draw::Program::from_static(SHADER_VERT, SHADER_FRAG, &["at_loc", "at_color"])?;
         draw::print_gl_error()?;
 
-        println!("Make verts");
-        let triangles = generate_csg_scene().get_triangles();
-        let vertex_count = triangles.len() * 3;
-        let mut verts = draw::HwBuf::new(vertex_count, draw::Usage::Static)?;
-        for triangle in triangles {
-            let [p0, p1, p2] = triangle.positions;
-            verts.push(Vertex(p0.0, p0.1, p0.2, 1, 0, 0, 0));
-            verts.push(Vertex(p1.0, p1.1, p1.2, 0, 1, 0, 0));
-            verts.push(Vertex(p2.0, p2.1, p2.2, 0, 0, 1, 0));
-        }
-        verts.prepear_graphics();
-        draw::print_gl_error()?;
-
-        println!("Make attributes");
-        let mut pipeline = draw::Pipeline::new(draw::PrimitiveType::Triangles)?;
-        let buf_id = pipeline.push_buffer(&verts, size_of::<Vertex>());
-        pipeline.push_attribute(buf_id, 3, draw::DataType::F32, false);
-        pipeline.push_attribute(buf_id, 4, draw::DataType::U8, false);
-        draw::print_gl_error()?;
+        let scene = make_scene(generate_cubes)?;
 
         println!("Make uniform location");
         let location_mvp = prog.get_uniform_location("un_mvp");
@@ -98,19 +119,29 @@ impl Application {
         Ok(Application {
             win,
             prog,
-            verts,
-            pipeline,
             location_mvp,
-            vertex_count,
+            scene,
         })
     }
 
-    pub fn run(&mut self) {
+    pub fn run(mut self) {
         'gameloop: loop {
             self.win.poll_events();
+
             while let Some(c) = self.win.next_command() {
                 match c {
                     window::Command::Quit => break 'gameloop,
+                    window::Command::TypeCharacter(ch) => {
+                        let opt_scene = match ch {
+                            '1' => Some(make_scene(generate_cube)),
+                            '2' => Some(make_scene(generate_cubes)),
+                            _ => None,
+                        };
+
+                        if opt_scene.is_some() {
+                            self.scene = opt_scene.unwrap().unwrap();
+                        }
+                    }
                     _ => (),
                 }
             }
@@ -137,8 +168,8 @@ impl Application {
                 gl::UniformMatrix4fv(loc, 1, gl::FALSE, mat.values.as_ptr());
             });
 
-            self.verts.bind();
-            self.pipeline.draw(self.vertex_count);
+            self.scene.verts.bind();
+            self.scene.pipeline.draw(self.scene.vertex_count);
             self.win.swap_buffers();
             draw::print_gl_error().unwrap();
         }

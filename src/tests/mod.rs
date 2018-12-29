@@ -42,7 +42,8 @@ fn csg_total_subtraction() {
     let polys = Csg::subtract(
         &Csg::cube(Vector(1., 1., 1.), true), // Small cube
         &Csg::cube(Vector(2., 2., 2.), true), // Big cube
-    ).to_polygons();
+    )
+    .to_polygons();
 
     assert_eq!(0, polys.len());
 }
