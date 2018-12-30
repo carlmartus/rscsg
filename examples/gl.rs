@@ -42,11 +42,21 @@ struct Scene {
     vertex_count: usize,
 }
 
+#[derive(Default)]
+struct AppInput {
+    button: bool,
+    last_x: f32,
+    last_y: f32,
+    cam_x: f32,
+    cam_y: f32,
+}
+
 struct Application {
     win: window::Window,
     prog: draw::Program,
     location_mvp: draw::UniformLocation,
     scene: Scene,
+    input: AppInput,
 }
 
 fn scene_cube() -> Csg {
@@ -120,6 +130,7 @@ impl Application {
             prog,
             location_mvp,
             scene,
+            input: Default::default(),
         })
     }
 
@@ -142,27 +153,42 @@ impl Application {
                 }
             }
 
+            while let Some(p) = self.win.next_peripheral() {
+                match p.event {
+                    window::PeripheralEvent::MousePosition(x, y) => {
+                        if self.input.button {
+                            let dx = x - self.input.last_x;
+                            let dy = y - self.input.last_y;
+
+                            self.input.cam_x += dx * 0.01;
+                            self.input.cam_y += dy * 0.01;
+
+                            const Y_LIMIT: f32 = std::f32::consts::PI / 2.0 - 0.01;
+                            if self.input.cam_y > Y_LIMIT {
+                                self.input.cam_y = Y_LIMIT;
+                            } else if self.input.cam_y < -Y_LIMIT {
+                                self.input.cam_y = -Y_LIMIT;
+                            }
+                        }
+                        self.input.last_x = x;
+                        self.input.last_y = y;
+                    }
+                    window::PeripheralEvent::Button(id, press) => {
+                        if let window::ButtonId::Mouse(_) = id {
+                            self.input.button = press;
+                        }
+                    }
+                    _ => (),
+                }
+            }
+
             unsafe {
                 gl::Enable(gl::DEPTH_TEST);
                 gl::ClearColor(0.3, 0.4, 0.5, 1.0);
                 gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
             }
 
-            let mut mat = draw::Matrix4x4::new();
-            mat.camera_3d(
-                1.3f32,
-                1.3333f32,
-                0.1f32,
-                20f32,
-                draw::Vec3(-1.8, 1., 1.4), // Eye
-                draw::Vec3(0., 0., 0.),    // At
-                draw::Vec3(0f32, 0f32, 1f32),
-            ); // Center
-
-            self.prog.use_program();
-            self.prog.set_uniform(&self.location_mvp, |loc| unsafe {
-                gl::UniformMatrix4fv(loc, 1, gl::FALSE, mat.values.as_ptr());
-            });
+            self.update_camera();
 
             self.scene.verts.bind();
             self.scene.pipeline.draw(self.scene.vertex_count);
@@ -173,5 +199,29 @@ impl Application {
 
     fn change_csg(&mut self, csg: Csg) {
         self.scene = make_scene(csg).unwrap();
+    }
+
+    fn update_camera(&mut self) {
+        let mut mat = draw::Matrix4x4::new();
+
+        let z_mul = self.input.cam_y.cos();
+        mat.camera_3d(
+            1.3f32,
+            1.3333f32,
+            0.1f32,
+            20f32,
+            draw::Vec3(
+                4.0 * self.input.cam_x.cos() * z_mul,
+                4.0 * self.input.cam_x.sin() * z_mul,
+                4.0 * self.input.cam_y.sin(),
+            ), // Eye
+            draw::Vec3(0., 0., 0.),       // At
+            draw::Vec3(0f32, 0f32, 1f32), // Center
+        );
+
+        self.prog.use_program();
+        self.prog.set_uniform(&self.location_mvp, |loc| unsafe {
+            gl::UniformMatrix4fv(loc, 1, gl::FALSE, mat.values.as_ptr());
+        });
     }
 }
