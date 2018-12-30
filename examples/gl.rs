@@ -49,11 +49,13 @@ struct Application {
     scene: Scene,
 }
 
-fn generate_cube() -> Csg {
+fn scene_cube() -> Csg {
+    println!("Cube");
     Csg::cube(Vector(1., 1., 1.), true)
 }
 
-fn generate_cubes() -> Csg {
+fn scene_cubes() -> Csg {
+    println!("Cubes");
     Csg::union(
         &Csg::cube(Vector(1., 1., 1.), true).rotate(Vector(1., 0., 0.), 30.),
         &Csg::cube(Vector(1., 1., 1.), false),
@@ -67,12 +69,9 @@ fn main() {
     }
 }
 
-fn make_scene<F>(generator: F) -> Result<Scene, String>
-where
-    F: FnOnce() -> Csg,
-{
+fn make_scene(csg: Csg) -> Result<Scene, String> {
     println!("Make verts");
-    let triangles = generator().get_triangles();
+    let triangles = csg.get_triangles();
     let vertex_count = triangles.len() * 3;
     let mut verts = draw::HwBuf::new(vertex_count, draw::Usage::Static)?;
     for triangle in triangles {
@@ -110,7 +109,7 @@ impl Application {
         let prog = draw::Program::from_static(SHADER_VERT, SHADER_FRAG, &["at_loc", "at_color"])?;
         draw::print_gl_error()?;
 
-        let scene = make_scene(generate_cubes)?;
+        let scene = make_scene(scene_cubes())?;
 
         println!("Make uniform location");
         let location_mvp = prog.get_uniform_location("un_mvp");
@@ -132,15 +131,12 @@ impl Application {
                 match c {
                     window::Command::Quit => break 'gameloop,
                     window::Command::TypeCharacter(ch) => {
-                        let opt_scene = match ch {
-                            '1' => Some(make_scene(generate_cube)),
-                            '2' => Some(make_scene(generate_cubes)),
-                            _ => None,
+                        match ch {
+                            '1' => self.change_csg(scene_cube()),
+                            '2' => self.change_csg(scene_cubes()),
+                            'q' => break 'gameloop,
+                            _ => (),
                         };
-
-                        if opt_scene.is_some() {
-                            self.scene = opt_scene.unwrap().unwrap();
-                        }
                     }
                     _ => (),
                 }
@@ -173,5 +169,9 @@ impl Application {
             self.win.swap_buffers();
             draw::print_gl_error().unwrap();
         }
+    }
+
+    fn change_csg(&mut self, csg: Csg) {
+        self.scene = make_scene(csg).unwrap();
     }
 }
