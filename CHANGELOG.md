@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - 2D CSG operations in `rscsg::dim2`.
 - Real time OpenGL example rendering a 3D Csg shape.
+- GL sample can change between scenes.
+- GL sample rotatable with mouse.
 
 ### Changed
 - Moved all 3D operations to module `rscsg::dim3`.
