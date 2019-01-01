@@ -61,21 +61,20 @@ struct Application {
     input: AppInput,
 }
 
-type SceneGenerator = fn() -> Csg;
+type SceneGenerator = fn(i32) -> Csg;
 const SCENES: [(&str, SceneGenerator); 2] = [
     ("Cube", scene_cube as SceneGenerator),
     ("Cubes", scene_cubes as SceneGenerator),
 ];
 
-fn scene_cube() -> Csg {
-    println!("Cube");
+fn scene_cube(_step: i32) -> Csg {
     Csg::cube(Vector(1., 1., 1.), true)
 }
 
-fn scene_cubes() -> Csg {
-    println!("Cubes");
+fn scene_cubes(step: i32) -> Csg {
+    let rotate = 30. + (step*4) as f32;
     Csg::union(
-        &Csg::cube(Vector(1., 1., 1.), true).rotate(Vector(1., 0., 0.), 30.),
+        &Csg::cube(Vector(1., 1., 1.), true).rotate(Vector(1., 0., 0.), rotate),
         &Csg::cube(Vector(1., 1., 1.), false),
     )
 }
@@ -88,7 +87,6 @@ fn main() {
 }
 
 fn make_scene(csg: Csg) -> Result<Scene, String> {
-    println!("Make verts");
     let triangles = csg.get_triangles();
     let vertex_count = triangles.len() * 3;
     let mut verts = draw::HwBuf::new(vertex_count, draw::Usage::Static)?;
@@ -101,7 +99,6 @@ fn make_scene(csg: Csg) -> Result<Scene, String> {
     verts.prepear_graphics();
     draw::print_gl_error()?;
 
-    println!("Make attributes");
     let mut pipeline = draw::Pipeline::new(draw::PrimitiveType::Triangles)?;
     let buf_id = pipeline.push_buffer(&verts, size_of::<Vertex>());
     pipeline.push_attribute(buf_id, 3, draw::DataType::F32, false);
@@ -117,19 +114,19 @@ fn make_scene(csg: Csg) -> Result<Scene, String> {
 
 impl Application {
     pub fn new() -> Result<Application, String> {
-        println!("Make window");
+        // Make window
         let win = window::WindowBuilder::new()
             .with_title("dialog".to_string())
             .build()?;
         draw::print_gl_error()?;
 
-        println!("Make shader");
+        // Make shader
         let prog = draw::Program::from_static(SHADER_VERT, SHADER_FRAG, &["at_loc", "at_color"])?;
         draw::print_gl_error()?;
 
-        let scene = make_scene(scene_cubes())?;
+        let scene = make_scene(scene_cube(0))?;
 
-        println!("Make uniform location");
+        // Make uniform location
         let location_mvp = prog.get_uniform_location("un_mvp");
         draw::print_gl_error()?;
 
@@ -160,12 +157,12 @@ impl Application {
                                     self.input.step += 1;
                                     let scene_id = self.input.scene_id;
                                     self.load_scene(scene_id);
-                                },
+                                }
                                 'k' => {
                                     self.input.step -= 1;
                                     let scene_id = self.input.scene_id;
                                     self.load_scene(scene_id);
-                                },
+                                }
                                 _ => (),
                             };
                         }
@@ -224,8 +221,10 @@ impl Application {
 
     fn load_scene(&mut self, id: usize) {
         let (name, generator) = &SCENES[id];
-        println!("Loading scene \"{}\"", name);
-        self.change_csg(generator());
+        let step = self.input.step;
+
+        println!("Loading scene \"{}\", with step {}", name, step);
+        self.change_csg(generator(step));
         self.input.scene_id = id;
     }
 
