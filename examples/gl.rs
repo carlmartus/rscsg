@@ -72,7 +72,7 @@ fn scene_cube(_step: i32) -> Csg {
 }
 
 fn scene_cubes(step: i32) -> Csg {
-    let rotate = 30. + (step*4) as f32;
+    let rotate = 30. + (step * 4) as f32;
     Csg::union(
         &Csg::cube(Vector(1., 1., 1.), true).rotate(Vector(1., 0., 0.), rotate),
         &Csg::cube(Vector(1., 1., 1.), false),
@@ -222,9 +222,14 @@ impl Application {
     fn load_scene(&mut self, id: usize) {
         let (name, generator) = &SCENES[id];
         let step = self.input.step;
+        let csg = generator(step);
+        let triangle_count = csg.get_triangles_count();
 
-        println!("Loading scene \"{}\", with step {}", name, step);
-        self.change_csg(generator(step));
+        println!(
+            "Loading scene \"{}\", with step {} and {} triangles",
+            name, step, triangle_count
+        );
+        self.change_csg(csg);
         self.input.scene_id = id;
     }
 

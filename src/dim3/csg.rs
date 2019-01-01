@@ -103,6 +103,16 @@ impl Csg {
         result
     }
 
+    pub fn get_triangles_count(&self) -> usize {
+        let mut sum = 0;
+
+        for poly in &self.polygons {
+            sum += poly.vertices.len() - 2;
+        }
+
+        sum
+    }
+
     // Transformations
     pub fn transform_vertices<F>(mut self, func: F) -> Csg
     where
