@@ -49,6 +49,8 @@ struct AppInput {
     last_y: f32,
     cam_x: f32,
     cam_y: f32,
+    scene_id: usize,
+    step: i32,
 }
 
 struct Application {
@@ -58,6 +60,12 @@ struct Application {
     scene: Scene,
     input: AppInput,
 }
+
+type SceneGenerator = fn() -> Csg;
+const SCENES: [(&str, SceneGenerator); 2] = [
+    ("Cube", scene_cube as SceneGenerator),
+    ("Cubes", scene_cubes as SceneGenerator),
+];
 
 fn scene_cube() -> Csg {
     println!("Cube");
@@ -142,12 +150,25 @@ impl Application {
                 match c {
                     window::Command::Quit => break 'gameloop,
                     window::Command::TypeCharacter(ch) => {
-                        match ch {
-                            '1' => self.change_csg(scene_cube()),
-                            '2' => self.change_csg(scene_cubes()),
-                            'q' => break 'gameloop,
-                            _ => (),
-                        };
+                        if ch >= '1' && (ch as usize) < ('1' as usize + SCENES.len()) {
+                            let id = (ch as usize - '1' as usize) as usize;
+                            self.load_scene(id);
+                        } else {
+                            match ch {
+                                'q' => break 'gameloop,
+                                'j' => {
+                                    self.input.step += 1;
+                                    let scene_id = self.input.scene_id;
+                                    self.load_scene(scene_id);
+                                },
+                                'k' => {
+                                    self.input.step -= 1;
+                                    let scene_id = self.input.scene_id;
+                                    self.load_scene(scene_id);
+                                },
+                                _ => (),
+                            };
+                        }
                     }
                     _ => (),
                 }
@@ -199,6 +220,13 @@ impl Application {
 
     fn change_csg(&mut self, csg: Csg) {
         self.scene = make_scene(csg).unwrap();
+    }
+
+    fn load_scene(&mut self, id: usize) {
+        let (name, generator) = &SCENES[id];
+        println!("Loading scene \"{}\"", name);
+        self.change_csg(generator());
+        self.input.scene_id = id;
     }
 
     fn update_camera(&mut self) {
