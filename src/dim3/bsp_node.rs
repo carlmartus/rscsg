@@ -47,11 +47,7 @@ impl BspNode {
             self.back.as_mut().unwrap().invert();
         }
 
-        {
-            let temp = self.front.clone();
-            self.front = self.back.clone();
-            self.back = temp;
-        }
+        std::mem::swap(&mut self.front, &mut self.back);
     }
 
     /// Recursively remove all polygons in `polygons` that are inside this BSP tree.
@@ -106,7 +102,7 @@ impl BspNode {
     }
 
     pub fn all_polygons(&self) -> Vec<Polygon> {
-        let mut polys: Vec<Polygon> = self.polygons.clone();
+        let mut polys: Vec<Polygon> = Vec::new();
         self.fill_polygons(&mut polys);
         polys
     }
@@ -157,7 +153,7 @@ impl BspNode {
 
         // Recursively build the BSP tree
 
-        if front.len() > 0 {
+        if !front.is_empty() {
             if self.front.is_none() {
                 self.front = Some(Box::new(BspNode::new(None)));
             }
@@ -165,7 +161,7 @@ impl BspNode {
             self.front.as_mut().unwrap().build(front);
         }
 
-        if back.len() > 0 {
+        if !back.is_empty() {
             if self.back.is_none() {
                 self.back = Some(Box::new(BspNode::new(None)));
             }

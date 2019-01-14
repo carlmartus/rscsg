@@ -18,7 +18,7 @@ pub struct Vector(pub Unit, pub Unit, pub Unit);
 pub struct IVector(pub i32, pub i32, pub i32);
 
 impl Vector {
-    pub fn negate(&self) -> Vector {
+    pub fn negate(&self) -> Self {
         Vector(-self.0, -self.1, -self.2)
     }
 
@@ -27,7 +27,7 @@ impl Vector {
     }
 
     /// Lerp. Linear interpolation from `self` to `other`
-    pub fn lerp(&self, other: Vector, t: Unit) -> Vector {
+    pub fn lerp(&self, other: Vector, t: Unit) -> Self {
         let me = self.clone();
         me + (other - me) * t
     }
@@ -37,12 +37,12 @@ impl Vector {
     }
 
     /// Normalize length of vector to 1.
-    pub fn normalize(&self) -> Vector {
+    pub fn normalize(&self) -> Self {
         *self / self.length()
     }
 
     /// Cross product with another vector.
-    pub fn cross(&self, other: Vector) -> Vector {
+    pub fn cross(&self, other: Vector) -> Self {
         Vector(
             self.1 * other.2 - self.2 * other.1,
             self.2 * other.0 - self.0 * other.2,
@@ -50,7 +50,7 @@ impl Vector {
         )
     }
 
-    pub fn rotate(&self, axis: Vector, angle_deg: Unit) -> Vector {
+    pub fn rotate(&self, axis: Vector, angle_deg: Unit) -> Self {
         let va: Unit = self.dot(axis);
         let vprep = *self - axis * va;
         let vprep_len = vprep.length();
@@ -78,47 +78,47 @@ impl Vector {
     }
 
     /// Make a new vector which is orthogonal to `self`.
-    pub fn make_orthogonal(&self) -> Vector {
+    pub fn make_orthogonal(&self) -> Self {
         *self
     }
 }
 
 impl Add for Vector {
-    type Output = Vector;
+    type Output = Self;
 
-    fn add(self, other: Vector) -> Vector {
+    fn add(self, other: Self) -> Self {
         Vector(self.0 + other.0, self.1 + other.1, self.2 + other.2)
     }
 }
 
 impl Sub for Vector {
-    type Output = Vector;
+    type Output = Self;
 
-    fn sub(self, other: Vector) -> Vector {
+    fn sub(self, other: Self) -> Self {
         Vector(self.0 - other.0, self.1 - other.1, self.2 - other.2)
     }
 }
 
 impl Neg for Vector {
-    type Output = Vector;
+    type Output = Self;
 
-    fn neg(self) -> Vector {
+    fn neg(self) -> Self {
         self.negate()
     }
 }
 
 impl Mul<Unit> for Vector {
-    type Output = Vector;
+    type Output = Self;
 
-    fn mul(self, rhs: Unit) -> Vector {
+    fn mul(self, rhs: Unit) -> Self {
         Vector(self.0 * rhs, self.1 * rhs, self.2 * rhs)
     }
 }
 
 impl Div<Unit> for Vector {
-    type Output = Vector;
+    type Output = Self;
 
-    fn div(self, rhs: Unit) -> Vector {
+    fn div(self, rhs: Unit) -> Self {
         let inv = (1 as Unit) / rhs;
         Vector(self.0 * inv, self.1 * inv, self.2 * inv)
     }

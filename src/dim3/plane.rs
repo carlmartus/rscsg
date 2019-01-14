@@ -7,7 +7,7 @@ bitflags! {
         const COPLANAR = 0;
         const FRONT = 1;
         const BACK = 2;
-        const SPANNING = 3;
+        const FRONT_AND_BACK = 3;
     }
 }
 
@@ -74,7 +74,7 @@ impl Plane {
             Location::BACK => {
                 back.push(poly.clone());
             }
-            Location::SPANNING => {
+            Location::FRONT_AND_BACK => {
                 let mut f: Vec<Vertex> = Vec::new();
                 let mut b: Vec<Vertex> = Vec::new();
 
@@ -93,7 +93,7 @@ impl Plane {
                         b.push(vi);
                     }
 
-                    if (ti | tj) == Location::SPANNING {
+                    if (ti | tj) == Location::FRONT_AND_BACK {
                         let t = (self.1 - self.0.dot(vi.position))
                             / self.0.dot(vj.position - vi.position);
 

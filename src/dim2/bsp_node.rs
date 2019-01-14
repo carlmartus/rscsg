@@ -144,7 +144,7 @@ impl BspNode {
             self.lines.append(&mut second);
         }
 
-        if front.len() > 0 {
+        if !front.is_empty() {
             if self.front.is_none() {
                 self.front = Some(Box::new(BspNode::new(None)));
             }
@@ -152,7 +152,7 @@ impl BspNode {
             self.front.as_mut().unwrap().build(front);
         }
 
-        if back.len() > 0 {
+        if !back.is_empty() {
             if self.back.is_none() {
                 self.back = Some(Box::new(BspNode::new(None)));
             }

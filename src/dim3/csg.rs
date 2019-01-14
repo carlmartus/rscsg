@@ -172,19 +172,19 @@ impl Csg {
     }
 
     pub fn subtract(a: &Csg, b: &Csg) -> Csg {
-        let mut bsp_a = BspNode::new(Some(a.polygons.clone()));
-        let mut bsp_b = BspNode::new(Some(b.polygons.clone()));
+        let mut a = BspNode::new(Some(a.polygons.clone()));
+        let mut b = BspNode::new(Some(b.polygons.clone()));
 
-        bsp_a.invert();
-        bsp_a.clip_to(&mut bsp_b);
-        bsp_b.clip_to(&mut bsp_a);
-        bsp_b.invert();
-        bsp_b.clip_to(&mut bsp_a);
-        bsp_b.invert();
-        bsp_a.build(bsp_b.all_polygons());
-        bsp_a.invert();
+        a.invert();
+        a.clip_to(&mut b);
+        b.clip_to(&mut a);
+        b.invert();
+        b.clip_to(&mut a);
+        b.invert();
+        a.build(b.all_polygons());
+        a.invert();
 
-        Csg::from_polygons(bsp_a.all_polygons())
+        Csg::from_polygons(a.all_polygons())
     }
 
     pub fn intersect(a: &Csg, b: &Csg) -> Csg {
