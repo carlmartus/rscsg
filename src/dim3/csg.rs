@@ -161,10 +161,10 @@ impl Csg {
         let mut a = BspNode::new(Some(a.polygons.clone()));
         let mut b = BspNode::new(Some(b.polygons.clone()));
 
-        a.clip_to(&mut b);
-        b.clip_to(&mut a);
+        a.clip_to(&b);
+        b.clip_to(&a);
         b.invert();
-        b.clip_to(&mut a);
+        b.clip_to(&a);
         b.invert();
         a.build(b.all_polygons());
 
@@ -176,10 +176,10 @@ impl Csg {
         let mut b = BspNode::new(Some(b.polygons.clone()));
 
         a.invert();
-        a.clip_to(&mut b);
-        b.clip_to(&mut a);
+        a.clip_to(&b);
+        b.clip_to(&a);
         b.invert();
-        b.clip_to(&mut a);
+        b.clip_to(&a);
         b.invert();
         a.build(b.all_polygons());
         a.invert();
@@ -192,10 +192,10 @@ impl Csg {
         let mut b = BspNode::new(Some(b.polygons.clone()));
 
         a.invert();
-        b.clip_to(&mut a);
+        b.clip_to(&a);
         b.invert();
-        a.clip_to(&mut b);
-        b.clip_to(&mut a);
+        a.clip_to(&b);
+        b.clip_to(&a);
         a.build(b.all_polygons());
         a.invert();
         Csg::from_polygons(a.all_polygons())

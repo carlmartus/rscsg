@@ -51,7 +51,7 @@ impl BspNode {
     }
 
     /// Recursively remove all polygons in `polygons` that are inside this BSP tree.
-    pub fn clip_polygons(&mut self, polygons: &Vec<Polygon>) -> Vec<Polygon> {
+    pub fn clip_polygons(&self, polygons: &Vec<Polygon>) -> Vec<Polygon> {
         if self.plane.is_none() {
             return self.polygons.clone();
         }
@@ -59,11 +59,11 @@ impl BspNode {
         let mut front: Vec<Polygon> = Vec::new();
         let mut back: Vec<Polygon> = Vec::new();
 
-        for mut poly in polygons {
+        for poly in polygons {
             let mut second_front: Vec<Polygon> = Vec::new();
             let mut second_back: Vec<Polygon> = Vec::new();
-            self.plane.as_mut().unwrap().split_polygon(
-                &mut poly,
+            self.plane.as_ref().unwrap().split_polygon(
+                &poly,
                 &mut front,
                 &mut back,
                 &mut second_front,
@@ -74,13 +74,13 @@ impl BspNode {
         }
 
         let mut front = if self.front.is_some() {
-            self.front.as_mut().unwrap().clip_polygons(&mut front)
+            self.front.as_ref().unwrap().clip_polygons(&mut front)
         } else {
             front
         };
 
         let mut back = if self.back.is_some() {
-            self.back.as_mut().unwrap().clip_polygons(&mut back)
+            self.back.as_ref().unwrap().clip_polygons(&mut back)
         } else {
             Vec::new()
         };
@@ -89,7 +89,7 @@ impl BspNode {
         front
     }
 
-    pub fn clip_to(&mut self, bsp: &mut BspNode) {
+    pub fn clip_to(&mut self, bsp: &BspNode) {
         self.polygons = bsp.clip_polygons(&self.polygons);
 
         if self.front.is_some() {
