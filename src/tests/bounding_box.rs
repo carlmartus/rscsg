@@ -58,13 +58,13 @@ impl BoundBox {
         }
 
         // Max
-        if v.0 > self.min.0 {
+        if v.0 > self.max.0 {
             self.max.0 = v.0
         }
-        if v.1 > self.min.1 {
+        if v.1 > self.max.1 {
             self.max.1 = v.1
         }
-        if v.2 > self.min.2 {
+        if v.2 > self.max.2 {
             self.max.2 = v.2
         }
 
