@@ -1,2 +1,2 @@
 language: rust
-rust: 1.27.0
+rust: 1.31.0
