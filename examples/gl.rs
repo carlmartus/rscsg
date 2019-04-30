@@ -98,6 +98,8 @@ fn scene_cut_cube(step: i32) -> Csg {
 }
 
 fn main() {
+    eprintln!(" - Rotate the view with the mouse.\n - Change between scenes by pressing the numbers [1-4].\n - Animate the scene with [j/k].");
+
     match Application::new() {
         Ok(a) => a.run(),
         Err(msg) => eprintln!("Error at start: {}", msg),
