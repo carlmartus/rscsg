@@ -1,4 +1,4 @@
-use dim3::{BspNode, Polygon, Triangle, Vector, Vertex};
+use dim3::{BspNode, Polygon, Triangle, Vector, Vertex, Plane};
 use Unit;
 
 #[derive(Clone)]
@@ -122,7 +122,12 @@ impl Csg {
             for vert in &mut poly.vertices {
                 *vert = func(*vert);
             }
-            // TODO Update plane
+
+            poly.plane = Plane::from_points(
+                poly.vertices[0].position,
+                poly.vertices[1].position,
+                poly.vertices[2].position
+            )
         }
         self
     }
