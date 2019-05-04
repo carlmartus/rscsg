@@ -134,11 +134,10 @@ impl BspNode {
 
         let plane = self.plane.clone().unwrap();
 
-        self.polygons.push(polygons[0].clone());
         let mut front: Vec<Polygon> = Vec::new();
         let mut back: Vec<Polygon> = Vec::new();
 
-        for poly in polygons.iter().skip(1) {
+        for poly in polygons.iter() {
             let mut second: Vec<Polygon> = Vec::new();
 
             plane.split_polygon(
