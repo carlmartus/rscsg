@@ -35,8 +35,8 @@ impl BspNode {
             p.flip();
         }
 
-        if self.plane.is_some() {
-            self.plane.as_mut().unwrap().flip();
+        if let Some(plane) = &mut self.plane {
+            *plane = plane.flip();
         }
 
         if self.front.is_some() {
