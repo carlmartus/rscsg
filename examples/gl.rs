@@ -1,9 +1,12 @@
+extern crate glfw;
 extern crate lingo;
 extern crate rscsg;
 
-use lingo::{draw, gl, window};
+use glfw::{Context, WindowEvent};
+use lingo::{draw, gl};
 use rscsg::dim3::{Csg, Vector};
 use std::mem::size_of;
+use std::sync::mpsc::Receiver;
 
 const SHADER_VERT: &'static str = r#"
 #version 100
@@ -54,7 +57,9 @@ struct AppInput {
 }
 
 struct Application {
-    win: window::Window,
+    glfw_ctx: glfw::Glfw,
+    win: glfw::Window,
+    events: Receiver<(f64, WindowEvent)>,
     prog: draw::Program,
     location_mvp: draw::UniformLocation,
     scene: Scene,
@@ -135,9 +140,19 @@ fn make_scene(csg: Csg) -> Result<Scene, String> {
 impl Application {
     pub fn new() -> Result<Application, String> {
         // Make window
-        let win = window::WindowBuilder::new()
-            .with_title("dialog".to_string())
-            .build()?;
+        let glfw_ctx = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
+
+        let (mut win, events) = glfw_ctx
+            .create_window(300, 300, "Hello this is window", glfw::WindowMode::Windowed)
+            .expect("Failed to create GLFW window.");
+
+        win.set_char_polling(true);
+        win.set_cursor_pos_polling(true);
+        win.set_mouse_button_polling(true);
+        win.set_size_polling(true);
+        win.make_current();
+
+        gl::load_with(|s| win.get_proc_address(s) as *const _);
         draw::print_gl_error()?;
 
         // Make shader
@@ -151,7 +166,9 @@ impl Application {
         draw::print_gl_error()?;
 
         Ok(Application {
+            glfw_ctx,
             win,
+            events,
             prog,
             location_mvp,
             scene,
@@ -161,12 +178,21 @@ impl Application {
 
     pub fn run(mut self) {
         'gameloop: loop {
-            self.win.poll_events();
+            self.glfw_ctx.wait_events();
 
-            while let Some(c) = self.win.next_command() {
-                match c {
-                    window::Command::Quit => break 'gameloop,
-                    window::Command::TypeCharacter(ch) => {
+            let event_iter = glfw::flush_messages(&self.events);
+            for (_, event) in event_iter {
+                eprintln!("Loop event");
+                match event {
+                    WindowEvent::Size(w, h) => unsafe {
+                        eprintln!("Resize {}x{}", w, h);
+                        gl::Viewport(0, 0, w, h);
+                    },
+                    WindowEvent::Key(glfw::Key::Escape, _, glfw::Action::Press, _) => {
+                        self.win.set_should_close(true)
+                    }
+                    WindowEvent::Char(ch) => {
+                        eprintln!("CHAR {}", ch);
                         if ch >= '1' && (ch as usize) < ('1' as usize + SCENES.len()) {
                             let id = (ch as usize - '1' as usize) as usize;
                             self.load_scene(id);
@@ -187,13 +213,10 @@ impl Application {
                             };
                         }
                     }
-                    _ => (),
-                }
-            }
-
-            while let Some(p) = self.win.next_peripheral() {
-                match p.event {
-                    window::PeripheralEvent::MousePosition(x, y) => {
+                    WindowEvent::CursorPos(x, y) => {
+                        let x = x as f32;
+                        let y = y as f32;
+                        eprintln!("Cursor @ {}, {}", x, y);
                         if self.input.button {
                             let dx = x - self.input.last_x;
                             let dy = y - self.input.last_y;
@@ -210,11 +233,6 @@ impl Application {
                         }
                         self.input.last_x = x;
                         self.input.last_y = y;
-                    }
-                    window::PeripheralEvent::Button(id, press) => {
-                        if let window::ButtonId::Mouse(_) = id {
-                            self.input.button = press;
-                        }
                     }
                     _ => (),
                 }
